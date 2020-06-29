@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Champ } from '../types'
 import styled, { css, keyframes } from 'styled-components'
+import { ConfirmedChampState } from '../App'
 
 type WrapperProps = {
     hide: boolean
@@ -9,9 +10,9 @@ type WrapperProps = {
 
 
 const Wrapper = styled.div<WrapperProps>`
-    width: 80%; 
+    width: 60%; 
     position: absolute;
-    left: 20%;
+    left: 40%;
     background: black;
     height: 100%;
     opacity: 1;
@@ -44,7 +45,7 @@ const Wrapper = styled.div<WrapperProps>`
 `
 
 type ConfirmedPanelProps = {
-    champ: Champ |null
+    confirmedState: ConfirmedChampState
     onUnConfirm: () => void
 }
 
@@ -52,17 +53,13 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
     const { onUnConfirm: onUnconfirmed } = props
     const [delay, setDelay] = useState(500)
 
-    const [champ, setChamp] = useState<Champ | null>(props.champ)
+    const [champ, setChamp] = useState<Champ | null>(props.confirmedState ? props.confirmedState.champ : null)
 
     useEffect(() => {
-        if(props.champ) {
-            setChamp(props.champ)
-        } else {
-            setTimeout(() => {
-                setChamp(null)
-            }, 1000)
-        }
-    }, [props.champ])
+        if(props.confirmedState) {
+            setChamp(props.confirmedState.champ)
+        } 
+    }, [props.confirmedState])
 
     useEffect(() => {
         const set = (num: number) => {
@@ -70,14 +67,14 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
                 setDelay(num)
             }, 500)
         }
-        if(!!props.champ) {
+        if(!!props.confirmedState) {
             set(0)
         } else {
             set(500)
         }
-    }, [!!props.champ])
+    }, [!!props.confirmedState])
 
-    return <Wrapper hide={!props.champ} delay={delay}>
+    return <Wrapper hide={!props.confirmedState} delay={delay}>
         {champ && <div className='innerWrapper'>
         <button onClick={onUnconfirmed} className='close'>
             Close

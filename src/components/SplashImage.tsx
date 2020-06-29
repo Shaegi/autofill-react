@@ -1,29 +1,34 @@
-import React, { useCallback, useState, useContext, useEffect, useRef } from 'react'
-import styled, { useTheme, ThemeContext, createGlobalStyle } from 'styled-components'
+import React, { useCallback, useState, useContext, useEffect, useRef, useMemo } from 'react'
+import styled, { useTheme, ThemeContext, createGlobalStyle, css } from 'styled-components'
 import CheckSharpIcon from '@material-ui/icons/CheckSharp'
 import CasinoSharpIcon from '@material-ui/icons/CasinoSharp'
 import { Lane, Champ } from '../types'
 import { CircularProgress } from '@material-ui/core'
+import { ConfirmedChampState } from '../App'
 
 type StyledSplashImageProps = {
     hovered: boolean
     left: number
     hide: boolean
+    isConfirmed?: boolean
+    width: number
+    selectedIndex?: number |null
     imgSrc: string
   }
   
   const StyledSplashImage = styled.div<StyledSplashImageProps>`
-    width: 20%;   
+    max-width: ${p => p.width}vw;
+    width: ${p => p.width}vw;   
+    min-width: ${p => p.width}vw;
+    overflow: hidden;
     opacity: ${p => p.hide ? 0 : 1};
     height: 100vh;
     background-repeat: no-repeat;
     background-size: cover;
     background-position-x: 70%;
     background-image: url(${p => p.imgSrc});
-    transform: translateX(${p => p.left}px);
-    transition: all 1s ease-in-out;
+    transition: all .7s ease-in-out;
     position: relative;
-
 
     .hidden {
       height: 0;
@@ -100,15 +105,16 @@ type StyledSplashImageProps = {
 
 export type SplashImageProps = {
     role: Lane
-    confirmedChamp: Champ | null
+    index: number
+    confirmedChampState: ConfirmedChampState | null
     champ: Champ
     onRoll: (role: Lane) => void
-    onConfirm: (champ: Champ) => void
+    onConfirm: (role: Lane, champ: Champ, index: number) => void
   }
   
   
   const SplashImage: React.FC<SplashImageProps> = props => {
-    const { champ, role, onRoll, onConfirm, confirmedChamp } = props
+    const { champ, role, onRoll, onConfirm, confirmedChampState, index } = props
     const [hovered, setHovered] = useState(false)
     const imgSrc = `http://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champ.id}_0.jpg`
   
@@ -117,13 +123,13 @@ export type SplashImageProps = {
     }, [role, onRoll])
   
     const handleConfirm = useCallback(() => {
-      onConfirm(champ)
+      onConfirm(role, champ, index)
     },[champ, onConfirm])
 
     const loadedRef = useRef<string | null>(null)
     
     const [loading, setLoading] = useState(true)
-    
+
     useEffect(() => {
       // sometimes img is already loaded before effect has been called. Therefore we remember last loaded champ.id, if its the same, img already has been loaded
       if(loadedRef.current !== champ.id) {
@@ -137,7 +143,16 @@ export type SplashImageProps = {
       setLoading(false)
     }, [setLoading, champ])
 
-    const isConfirmed = confirmedChamp && confirmedChamp.id === champ.id
+    const isConfirmed = confirmedChampState && confirmedChampState.champ.id === champ.id && confirmedChampState.role === role
+
+    // useEffect(() => {
+    //   const calc = () => {
+    //     setWidth(isConfirmed ? window.innerWidth * .4 : window.innerWidth / 5)
+    //   }
+    //   window.addEventListener('resize', calc)
+    //   return () => window.removeEventListener('resize', calc)
+    // }, [isConfirmed])
+
 
     useEffect(() => {
       if(isConfirmed) {
@@ -163,11 +178,9 @@ export type SplashImageProps = {
     useEffect(() => {
       const calcLeftOffset = () => {
         if(wrapperRef.current) {
-          console.log('???', role, wrapperRef.current.getBoundingClientRect())
           const rect = wrapperRef.current.getBoundingClientRect()
-          if(rect.x !== 0){
-
-            setLeftOffset(-rect.x)
+          if(wrapperRef.current.offsetLeft !== 0){
+            setLeftOffset(-(wrapperRef.current.offsetLeft - rect.width * 0.5))
           } 
         }
       }
@@ -178,9 +191,23 @@ export type SplashImageProps = {
         window.removeEventListener('resize', calcLeftOffset)
       }
     }, [isConfirmed])
+
+    console.log(confirmedChampState, isConfirmed, !!confirmedChampState && !isConfirmed)
+    const width = useMemo(() => {
+      if(confirmedChampState) {
+        if(isConfirmed) {
+          return 40
+        } else if(index > confirmedChampState.roleIndex) {
+          return 20
+        } 
+        return 0
+      }
+
+      return 20
+    }, [confirmedChampState])
     
     
-    return <StyledSplashImage ref={wrapperRef} hovered={hovered} onMouseEnter={handleMouseEnter} hide={!!confirmedChamp && !isConfirmed} onMouseLeave={handleMouseLeave} imgSrc={imgSrc} left={isConfirmed ? leftOffset : 0}>
+    return <StyledSplashImage ref={wrapperRef} selectedIndex={confirmedChampState && confirmedChampState.roleIndex} hovered={hovered} width={width} onMouseEnter={handleMouseEnter} isConfirmed={!!isConfirmed} hide={!!confirmedChampState && !isConfirmed} onMouseLeave={handleMouseLeave} imgSrc={imgSrc} left={isConfirmed ? leftOffset : 0}>
         {hovered ? <><div className='reroll' onClick={handleRoll}>
           <div>
             <CasinoSharpIcon  fontSize='large' />

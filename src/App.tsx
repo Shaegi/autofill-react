@@ -12,6 +12,8 @@ import ConfirmedPanel from './components/ConfirmedPanel';
 
 const StyledApp = styled.div`
   display: flex;
+  position: relative;
+  width: 100%;
   max-width: 100vw;
   overflow: hidden;
   max-height: 100vh;
@@ -123,21 +125,30 @@ type AppProps = {
   onSummonerNameChange: (name: string) => void
 }
 
+export type ConfirmedChampState = {
+  champ: Champ,
+  role: Lane,
+  roleIndex: number
+} | null
+
 
 const App: React.FC<AppProps> = (props) => {
   const { champs, onSummonerNameChange, confirmedName } = props
   const { rollState, onRoll, onRollAllLanes } = useRollState(champs)
-  const [confirmedChamp, setConfirmedChamp] = useState<Champ | null>(null)
+  const [confirmedChampState, setConfirmedChamp] = useState<ConfirmedChampState>(null)
 
   useEffect(() => {
-    onRollAllLanes()
+    if(confirmedName) {
+      onRollAllLanes()
+    }
   }, [confirmedName])
 
-  console.log(rollState)
-
-
-  const handleConfirm = useCallback<SplashImageProps['onConfirm']>((champ) => {
-    setConfirmedChamp(champ)
+  const handleConfirm = useCallback<SplashImageProps['onConfirm']>((role, champ, index) => {
+    setConfirmedChamp({
+      champ,
+      role,
+      roleIndex: index
+    })
   }, []) 
 
   const handleUnConfirm = useCallback(() => {
@@ -146,13 +157,13 @@ const App: React.FC<AppProps> = (props) => {
 
   return (
     <StyledApp>
-      <EnterSummonerNamePrompt onConfirm={onSummonerNameChange} confirmedName={confirmedName} hide={!!confirmedChamp} />
-      <SplashImage  champ={rollState[Lane.TOP]} role={Lane.TOP} onRoll={onRoll} onConfirm={handleConfirm} confirmedChamp={confirmedChamp}  />
-      <SplashImage champ={rollState[Lane.JUNGLE]}  role={Lane.JUNGLE}  onRoll={onRoll} onConfirm={handleConfirm} confirmedChamp={confirmedChamp}/>
-      <SplashImage champ={rollState[Lane.MID]}  role={Lane.MID}  onRoll={onRoll} onConfirm={handleConfirm} confirmedChamp={confirmedChamp}/>
-      <SplashImage champ={rollState[Lane.BOT]} role={Lane.BOT}  onRoll={onRoll} onConfirm={handleConfirm} confirmedChamp={confirmedChamp}/>
-      <SplashImage champ={rollState[Lane.SUPPORT]} role={Lane.SUPPORT}  onRoll={onRoll} onConfirm={handleConfirm} confirmedChamp={confirmedChamp}/>
-      <ConfirmedPanel champ={confirmedChamp} onUnConfirm={handleUnConfirm} />
+      <EnterSummonerNamePrompt onConfirm={onSummonerNameChange} confirmedName={confirmedName} hide={!!confirmedChampState} />
+      <SplashImage  champ={rollState[Lane.TOP]} role={Lane.TOP} onRoll={onRoll} onConfirm={handleConfirm} confirmedChampState={confirmedChampState} index={0}  />
+      <SplashImage champ={rollState[Lane.JUNGLE]}  role={Lane.JUNGLE}  onRoll={onRoll} onConfirm={handleConfirm} confirmedChampState={confirmedChampState} index={1}/>
+      <SplashImage champ={rollState[Lane.MID]}  role={Lane.MID}  onRoll={onRoll} onConfirm={handleConfirm} confirmedChampState={confirmedChampState} index={2}/>
+      <SplashImage champ={rollState[Lane.BOT]} role={Lane.BOT}  onRoll={onRoll} onConfirm={handleConfirm} confirmedChampState={confirmedChampState} index={3}/>
+      <SplashImage champ={rollState[Lane.SUPPORT]} role={Lane.SUPPORT}  onRoll={onRoll} onConfirm={handleConfirm} confirmedChampState={confirmedChampState} index={4}/>
+      <ConfirmedPanel confirmedState={confirmedChampState} onUnConfirm={handleUnConfirm} />
       {/* <BottomBar /> */}
     </StyledApp>
   )
