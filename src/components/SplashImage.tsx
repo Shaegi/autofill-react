@@ -12,6 +12,7 @@ type StyledSplashImageProps = {
     hide: boolean
     isConfirmed?: boolean
     width: number
+    offset?: number | null
     selectedIndex?: number |null
     imgSrc: string
   }
@@ -25,9 +26,9 @@ type StyledSplashImageProps = {
     height: 100vh;
     background-repeat: no-repeat;
     background-size: cover;
-    background-position-x: 70%;
+    background-position-x: ${p => p.offset || 70}%;
     background-image: url(${p => p.imgSrc});
-    transition: all .7s ease-in-out;
+    transition: all .7s ease-in-out, background-position-x 0s ease, background-image 0s ease;
     position: relative;
 
     .hidden {
@@ -145,14 +146,6 @@ export type SplashImageProps = {
 
     const isConfirmed = confirmedChampState && confirmedChampState.champ.id === champ.id && confirmedChampState.role === role
 
-    // useEffect(() => {
-    //   const calc = () => {
-    //     setWidth(isConfirmed ? window.innerWidth * .4 : window.innerWidth / 5)
-    //   }
-    //   window.addEventListener('resize', calc)
-    //   return () => window.removeEventListener('resize', calc)
-    // }, [isConfirmed])
-
 
     useEffect(() => {
       if(isConfirmed) {
@@ -207,7 +200,7 @@ export type SplashImageProps = {
     }, [confirmedChampState])
     
     
-    return <StyledSplashImage ref={wrapperRef} selectedIndex={confirmedChampState && confirmedChampState.roleIndex} hovered={hovered} width={width} onMouseEnter={handleMouseEnter} isConfirmed={!!isConfirmed} hide={!!confirmedChampState && !isConfirmed} onMouseLeave={handleMouseLeave} imgSrc={imgSrc} left={isConfirmed ? leftOffset : 0}>
+    return <StyledSplashImage ref={wrapperRef} offset={champ.layout.splashArtOffset} selectedIndex={confirmedChampState && confirmedChampState.roleIndex} hovered={hovered} width={width} onMouseEnter={handleMouseEnter} isConfirmed={!!isConfirmed} hide={!!confirmedChampState && !isConfirmed} onMouseLeave={handleMouseLeave} imgSrc={imgSrc} left={isConfirmed ? leftOffset : 0}>
         {hovered ? <><div className='reroll' onClick={handleRoll}>
           <div>
             <CasinoSharpIcon  fontSize='large' />

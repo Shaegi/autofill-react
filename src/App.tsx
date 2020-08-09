@@ -4,7 +4,7 @@ import EnterSummonerNamePrompt from './components/SummonerNamePrompt';
 import SplashImage, { SplashImageProps } from './components/SplashImage';
 import { Lane, Champ } from './types';
 import useRollState from './behaviour/useRoleState';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation, useApolloClient } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 import SplashScreen from './components/SplashScreen';
 import ConfirmedPanel from './components/ConfirmedPanel';
@@ -19,6 +19,10 @@ const StyledApp = styled.div`
   max-height: 100vh;
   height: 100%;
   background: black;
+
+  .MuiCircularProgress-root {
+    color: ${p => p.theme.color.primary};
+  }
 
   button {
     outline: none;
@@ -80,6 +84,7 @@ export const ChampsQuery = gql`
   query Champs ($summonerName: String) {
       champs(summonerName: $summonerName) {
         name
+        key
         title
         chestGranted
         title
@@ -88,10 +93,17 @@ export const ChampsQuery = gql`
         info {
           difficulty
         }
+        layout {
+          key
+          splashArtOffset
+        }
         id
         roles
         tags
-        lanes
+        lanes {
+          type
+          probability
+        }
         probability
       }
     }
@@ -132,10 +144,18 @@ export type ConfirmedChampState = {
 } | null
 
 
+const SelectChampMutation = gql`
+mutation selectChamp($input: SelectChampInput) {
+  selectChamp(input: $input)
+}
+`
+
 const App: React.FC<AppProps> = (props) => {
   const { champs, onSummonerNameChange, confirmedName } = props
   const { rollState, onRoll, onRollAllLanes } = useRollState(champs)
   const [confirmedChampState, setConfirmedChamp] = useState<ConfirmedChampState>(null)
+
+  const client = useApolloClient()
 
   useEffect(() => {
     if(confirmedName) {
@@ -144,6 +164,16 @@ const App: React.FC<AppProps> = (props) => {
   }, [confirmedName])
 
   const handleConfirm = useCallback<SplashImageProps['onConfirm']>((role, champ, index) => {
+
+    client.mutate({
+      mutation: SelectChampMutation, variables: {
+        input: {
+          championId: champ.id,
+          summonerName: confirmedName
+        }
+      }
+    })
+
     setConfirmedChamp({
       champ,
       role,

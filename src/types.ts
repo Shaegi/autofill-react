@@ -1,8 +1,21 @@
 export type Champ = {
     name: string
     id: string 
-    lanes: string[]
+    key: string
+    lanes: { 
+      type: string
+      probability: number
+    }[]
     title: string
+    info: {
+      difficulty: number
+    }
+    layout: {
+      key: string | null
+      splashArtOffset: number | null
+    }
+    masteryPoints: number | null
+    masteryLevel: number | null
     probability?: number | null
     roles: string[]
     tags: String[]

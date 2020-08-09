@@ -5,8 +5,9 @@ import { Lane, Champ } from "../types"
 const getRandomChamp = (champs: Champ[], lane: Lane): Champ => {
     let maxProbability = 0
     // get all champs with selected role within role array
-    const resolvedChamps = champs.filter(champ => champ.lanes.includes(lane)).map(c =>  {
-        const resolvedProbability = c.probability ? c.probability  * 100 : 1
+    const resolvedChamps = champs.filter(champ => champ.lanes.some(l => l.type === lane)).map(c =>  {
+        const laneInfo = c.lanes.find(l => l.type === lane)
+        const resolvedProbability = c.probability ? c.probability  * 100 : laneInfo && (laneInfo.probability) || 1
         // add up probability to get max 
         maxProbability += resolvedProbability
         return {
