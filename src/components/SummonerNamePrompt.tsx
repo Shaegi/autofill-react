@@ -78,7 +78,13 @@ const SummonerNamePromptWrapper = styled.div<{ show: boolean, showHint: boolean,
       background: black;
       outline: none;
       color: ${p => p.theme.color.primary};
-      padding: ${p => p.theme.size.s};
+      padding: ${p => p.theme.size.m};
+    }
+
+    .search-button {
+      margin-left: ${p => p.theme.size.xs};
+      padding: ${p => p.theme.size.m};
+      border: 1px solid ${p => p.theme.color.primary};
     }
   }
 
@@ -199,7 +205,7 @@ const EnterSummonerNamePrompt: React.FC<EnterSummonerNamePromptProps> = props =>
               <CircularProgress color={theme.color.primary} />
               <span>Loading summoner data</span>
             </div> : <>
-              <span>Enter your Summonername</span>
+              <h2>Enter your Summoner Name</h2>
               <button onClick={hide} className='close'><CloseIcon /></button>
               <div className='hintAndErrorSection'>
                 <div className='error'>Could not find any summoner with name: {errorName}</div>
@@ -207,6 +213,7 @@ const EnterSummonerNamePrompt: React.FC<EnterSummonerNamePromptProps> = props =>
               </div>
               <div>
                 <input ref={inputRef} value={inputValue} onChange={handleInputChange} minLength={3} onKeyDown={handleKeydown} />
+                <button className='search-button' onClick={handleConfirm}>Search</button>
               </div>
             </>}
           </div></> : <>

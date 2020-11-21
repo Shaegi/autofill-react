@@ -8,6 +8,7 @@ import { useQuery, useMutation, useApolloClient } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 import SplashScreen from './components/SplashScreen';
 import ConfirmedPanel from './components/ConfirmedPanel';
+import EmptyLane from './components/EmptyLane';
 
 
 const StyledApp = styled.div`
@@ -152,7 +153,7 @@ mutation selectChamp($input: SelectChampInput) {
 
 const App: React.FC<AppProps> = (props) => {
   const { champs, onSummonerNameChange, confirmedName } = props
-  const { rollState, onRoll, onRollAllLanes } = useRollState(champs)
+  const { rollState, onRoll, onResetAllLanes: onRollAllLanes, emptyLanes, onResetLane, alreadyRolledChampsState } = useRollState(champs)
   const [confirmedChampState, setConfirmedChamp] = useState<ConfirmedChampState>(null)
 
   const client = useApolloClient()
@@ -161,7 +162,7 @@ const App: React.FC<AppProps> = (props) => {
     if(confirmedName) {
       onRollAllLanes()
     }
-  }, [confirmedName])
+  }, [confirmedName, onRollAllLanes])
 
   const handleConfirm = useCallback<SplashImageProps['onConfirm']>((role, champ, index) => {
 
@@ -179,7 +180,7 @@ const App: React.FC<AppProps> = (props) => {
       role,
       roleIndex: index
     })
-  }, []) 
+  }, [client, confirmedName]) 
 
   const handleUnConfirm = useCallback(() => {
     setConfirmedChamp(null)
@@ -188,13 +189,13 @@ const App: React.FC<AppProps> = (props) => {
   return (
     <StyledApp>
       <EnterSummonerNamePrompt onConfirm={onSummonerNameChange} confirmedName={confirmedName} hide={!!confirmedChampState} />
-      <SplashImage  champ={rollState[Lane.TOP]} role={Lane.TOP} onRoll={onRoll} onConfirm={handleConfirm} confirmedChampState={confirmedChampState} index={0}  />
-      <SplashImage champ={rollState[Lane.JUNGLE]}  role={Lane.JUNGLE}  onRoll={onRoll} onConfirm={handleConfirm} confirmedChampState={confirmedChampState} index={1}/>
-      <SplashImage champ={rollState[Lane.MID]}  role={Lane.MID}  onRoll={onRoll} onConfirm={handleConfirm} confirmedChampState={confirmedChampState} index={2}/>
-      <SplashImage champ={rollState[Lane.BOT]} role={Lane.BOT}  onRoll={onRoll} onConfirm={handleConfirm} confirmedChampState={confirmedChampState} index={3}/>
-      <SplashImage champ={rollState[Lane.SUPPORT]} role={Lane.SUPPORT}  onRoll={onRoll} onConfirm={handleConfirm} confirmedChampState={confirmedChampState} index={4}/>
+      {Object.values(Lane).map((lane, index) => {
+        if(emptyLanes.includes(lane)) {
+          return <EmptyLane key={lane} lane={lane} onResetLane={onResetLane} rolledChamps={alreadyRolledChampsState[lane]} confirmed={!!confirmedChampState?.champ}  />
+        }
+        return <SplashImage key={lane} champ={rollState[lane]} role={lane} onRoll={onRoll} onConfirm={handleConfirm} confirmedChampState={confirmedChampState} index={index} />
+      })}
       <ConfirmedPanel confirmedState={confirmedChampState} onUnConfirm={handleUnConfirm} />
-      {/* <BottomBar /> */}
     </StyledApp>
   )
 }

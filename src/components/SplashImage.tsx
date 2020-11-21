@@ -1,9 +1,9 @@
-import React, { useCallback, useState, useContext, useEffect, useRef, useMemo } from 'react'
-import styled, { useTheme, ThemeContext, createGlobalStyle, css } from 'styled-components'
+import React, { useCallback, useState,  useEffect, useRef, useMemo } from 'react'
+import styled from 'styled-components'
 import CheckSharpIcon from '@material-ui/icons/CheckSharp'
-import CasinoSharpIcon from '@material-ui/icons/CasinoSharp'
 import { Lane, Champ } from '../types'
 import { CircularProgress } from '@material-ui/core'
+import CasinoSharpIcon from '@material-ui/icons/CasinoSharp'
 import { ConfirmedChampState } from '../App'
 
 type StyledSplashImageProps = {
@@ -106,6 +106,7 @@ type StyledSplashImageProps = {
 
 export type SplashImageProps = {
     role: Lane
+    empty?: boolean
     index: number
     confirmedChampState: ConfirmedChampState | null
     champ: Champ
@@ -125,7 +126,7 @@ export type SplashImageProps = {
   
     const handleConfirm = useCallback(() => {
       onConfirm(role, champ, index)
-    },[champ, onConfirm])
+    },[champ, index, onConfirm, role])
 
     const loadedRef = useRef<string | null>(null)
     
@@ -164,6 +165,12 @@ export type SplashImageProps = {
       }
     }, [isConfirmed])
 
+    const handleMouseMove = useCallback(() => {
+      if(!hovered && !isConfirmed) {
+        setHovered(true)
+      }
+    }, [hovered, isConfirmed])
+
     const wrapperRef = useRef<HTMLDivElement>(null)
 
     const [leftOffset, setLeftOffset] = useState(0)
@@ -185,7 +192,6 @@ export type SplashImageProps = {
       }
     }, [isConfirmed])
 
-    console.log(confirmedChampState, isConfirmed, !!confirmedChampState && !isConfirmed)
     const width = useMemo(() => {
       if(confirmedChampState) {
         if(isConfirmed) {
@@ -197,10 +203,10 @@ export type SplashImageProps = {
       }
 
       return 20
-    }, [confirmedChampState])
+    }, [confirmedChampState, index, isConfirmed])
     
     
-    return <StyledSplashImage ref={wrapperRef} offset={champ.layout.splashArtOffset} selectedIndex={confirmedChampState && confirmedChampState.roleIndex} hovered={hovered} width={width} onMouseEnter={handleMouseEnter} isConfirmed={!!isConfirmed} hide={!!confirmedChampState && !isConfirmed} onMouseLeave={handleMouseLeave} imgSrc={imgSrc} left={isConfirmed ? leftOffset : 0}>
+    return <StyledSplashImage ref={wrapperRef} offset={champ.layout.splashArtOffset} selectedIndex={confirmedChampState && confirmedChampState.roleIndex} hovered={hovered} width={width} onMouseMove={handleMouseMove} onMouseEnter={handleMouseEnter} isConfirmed={!!isConfirmed} hide={!!confirmedChampState && !isConfirmed} onMouseLeave={handleMouseLeave} imgSrc={imgSrc} left={isConfirmed ? leftOffset : 0}>
         {hovered ? <><div className='reroll' onClick={handleRoll}>
           <div>
             <CasinoSharpIcon  fontSize='large' />
@@ -215,7 +221,7 @@ export type SplashImageProps = {
         {loading && <div className='loader'>
           <CircularProgress  size={100} />
         </div>}
-        <img className='hidden' src={imgSrc} onLoad={handleLoaded}  />
+        <img className='hidden' src={imgSrc} onLoad={handleLoaded} />
       </StyledSplashImage>
   }
 

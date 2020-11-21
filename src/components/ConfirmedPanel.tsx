@@ -8,6 +8,7 @@ import TimelineIcon from '@material-ui/icons/Timeline';
 import AutofillStats from './AutofillStats';
 import ProBuilds from './links/ProBuilds'
 import BuildPreview from './BuildPreview';
+import DifficultyBar from './DifficultyBar';
 
 type WrapperProps = {
     hide: boolean
@@ -33,8 +34,8 @@ const Wrapper = styled.div<WrapperProps>`
             color: black;
             display: inline-flex;
             padding: ${p => p.theme.size.l} ${p => p.theme.size.xl};
-            /* background: rgba(255,255,255,0.8); */
-            background: rgba(11, 198, 227, .85);
+            background: rgba(255,255,255,0.8);
+            /* background: rgba(11, 198, 227, .85); */
             flex-direction: column;
             position: relative;
             transition: 1s all ease-in-out;
@@ -53,7 +54,7 @@ const Wrapper = styled.div<WrapperProps>`
                 top: 0px;
 
                 /* border: 1px solid ${p => p.theme.color.primary}; */
-                border: 1px solid white;
+                border: 1px solid ${p => p.theme.color.primary};
                 transform: translate(10px, 10px);
                 width: 100%;
                 height: 100%;
@@ -195,11 +196,10 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
         </div>
         <div className='content'>
             <div className='guides'>
-                    <BuildPreview champ={champ} lane={persistedConfirmState.role} />
+                <BuildPreview champ={champ} lane={persistedConfirmState.role} />
             </div>
             <div className='stats'>
-                <h3>Stats</h3>
-                Difficulty: {champ.info.difficulty}
+                <h3>Difficulty</h3>
                 <DifficultyBar difficulty={champ.info.difficulty} />   
             </div>
             <div className='yourHistory'>
@@ -229,34 +229,6 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
     </Wrapper>
 }
 
-const MAX_DIFFICULTY = 10
 
-type DifficultyBarProps = {
-    difficulty: number
-}
-
-type DifficultyBarWrapperProps = {
-    percentage: number
-}
-
-const DifficultyBarWrapper = styled.div<DifficultyBarWrapperProps>`
-    width: 10vw;
-    height: 5vh;
-    border: 1px solid ${p => p.theme.color.primary};
-
-    .inner {
-        width: ${p => p.percentage}%;
-        height: 100%;
-        background: white;
-    }
-`
-
-const DifficultyBar: React.FC<DifficultyBarProps> = props => {
-    const percentage = props.difficulty / MAX_DIFFICULTY * 100
-
-    return <DifficultyBarWrapper percentage={percentage}>
-        <div className="inner" />
-    </DifficultyBarWrapper>
-}
 
 export default ConfirmedPanel
