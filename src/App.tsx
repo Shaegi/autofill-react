@@ -32,6 +32,14 @@ const StyledApp = styled.div`
     border: none; 
     background: inherit;
   }
+
+  .endorsement {
+    color: ${p => p.theme.color.primary};
+    position: absolute;
+    bottom: ${p => p.theme.size.xs};
+    right: ${p => p.theme.size.xs};
+    z-index: 2;
+  }
 `
 
 
@@ -196,6 +204,9 @@ const App: React.FC<AppProps> = (props) => {
         return <SplashImage key={lane} champ={rollState[lane]} role={lane} onRoll={onRoll} onConfirm={handleConfirm} confirmedChampState={confirmedChampState} index={index} />
       })}
       <ConfirmedPanel confirmedState={confirmedChampState} onUnConfirm={handleUnConfirm} />
+      <div className='endorsement'>
+      Autofill isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
+      </div>
     </StyledApp>
   )
 }
