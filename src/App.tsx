@@ -201,11 +201,11 @@ const App: React.FC<AppProps> = (props) => {
         if(emptyLanes.includes(lane)) {
           return <EmptyLane key={lane} lane={lane} onResetLane={onResetLane} rolledChamps={alreadyRolledChampsState[lane]} confirmed={!!confirmedChampState?.champ}  />
         }
-        return <SplashImage key={lane} champ={rollState[lane]} role={lane} onRoll={onRoll} onConfirm={handleConfirm} confirmedChampState={confirmedChampState} index={index} />
+        return <SplashImage isLoggedIn={!!confirmedName} key={lane} champ={rollState[lane]} role={lane} onRoll={onRoll} onConfirm={handleConfirm} confirmedChampState={confirmedChampState} index={index} />
       })}
       <ConfirmedPanel confirmedState={confirmedChampState} onUnConfirm={handleUnConfirm} />
       <div className='endorsement'>
-      Autofill isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
+        Autofill isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
       </div>
     </StyledApp>
   )

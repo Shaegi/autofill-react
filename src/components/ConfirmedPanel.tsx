@@ -9,6 +9,7 @@ import AutofillStats from './AutofillStats';
 import ProBuilds from './links/ProBuilds'
 import BuildPreview from './BuildPreview';
 import DifficultyBar from './DifficultyBar';
+import SkinSelect from './SkinSelect';
 
 type WrapperProps = {
     hide: boolean
@@ -169,10 +170,11 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
         } else {
             set(500)
         }
-    }, [!!props.confirmedState])
+    }, [props.confirmedState])
 
 
     const [showAutofillStats, setShowAutofillStats] = useState(false)
+    const [showSkinSelect, setShowSkinSelect] = useState(false)
 
     let champ = null
 
@@ -218,13 +220,19 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
                 <TimelineIcon />
                 Autofill stats
             </button>
+            <button onClick={() => setShowAutofillStats(true)}>
+                <TimelineIcon />
+                Skins
+            </button>
             <button onClick={onUnconfirmed} className='close'>
                 <CloseIcon />
                 Close
             </button>
         </div>
         </div>
-        <AutofillStats  show={showAutofillStats} onHide={() => setShowAutofillStats(false)} /></>
+        <AutofillStats  show={showAutofillStats} onHide={() => setShowAutofillStats(false)} />
+        <SkinSelect  show={showSkinSelect} onHide={() => setShowSkinSelect(false)} />
+        </>
         }
     </Wrapper>
 }

@@ -2,6 +2,7 @@ export type Champ = {
     name: string
     id: string 
     key: string
+    chestGranted: boolean
     lanes: { 
       type: string
       probability: number

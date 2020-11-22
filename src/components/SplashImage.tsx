@@ -5,6 +5,7 @@ import { Lane, Champ } from '../types'
 import { CircularProgress } from '@material-ui/core'
 import CasinoSharpIcon from '@material-ui/icons/CasinoSharp'
 import { ConfirmedChampState } from '../App'
+import HextechChestAvailable from './HextechChestAvailable'
 
 type StyledSplashImageProps = {
     hovered: boolean
@@ -88,6 +89,14 @@ type StyledSplashImageProps = {
     .confirm {
       top: 0;
     }
+
+
+    .hextech-chest-available-wrapper {
+      position: absolute;
+      top: ${p => p.theme.size.xs};
+      left: ${p => p.theme.size.xs};
+      opacity: ${p => p.isConfirmed ? 0 : 1};
+    }
   `
   
   const RoleImage = styled.img<{ show: boolean}>`
@@ -107,6 +116,7 @@ type StyledSplashImageProps = {
 export type SplashImageProps = {
     role: Lane
     empty?: boolean
+    isLoggedIn?: boolean
     index: number
     confirmedChampState: ConfirmedChampState | null
     champ: Champ
@@ -116,7 +126,7 @@ export type SplashImageProps = {
   
   
   const SplashImage: React.FC<SplashImageProps> = props => {
-    const { champ, role, onRoll, onConfirm, confirmedChampState, index } = props
+    const { champ, role, onRoll, onConfirm, confirmedChampState, index, isLoggedIn } = props
     const [hovered, setHovered] = useState(false)
     const imgSrc = `http://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champ.id}_0.jpg`
   
@@ -205,8 +215,10 @@ export type SplashImageProps = {
       return 20
     }, [confirmedChampState, index, isConfirmed])
     
+
     
     return <StyledSplashImage ref={wrapperRef} offset={champ.layout.splashArtOffset} selectedIndex={confirmedChampState && confirmedChampState.roleIndex} hovered={hovered} width={width} onMouseMove={handleMouseMove} onMouseEnter={handleMouseEnter} isConfirmed={!!isConfirmed} hide={!!confirmedChampState && !isConfirmed} onMouseLeave={handleMouseLeave} imgSrc={imgSrc} left={isConfirmed ? leftOffset : 0}>
+        <HextechChestAvailable isLoggedIn={isLoggedIn} champ={champ} />
         {hovered ? <><div className='reroll' onClick={handleRoll}>
           <div>
             <CasinoSharpIcon  fontSize='large' />
@@ -221,7 +233,7 @@ export type SplashImageProps = {
         {loading && <div className='loader'>
           <CircularProgress  size={100} />
         </div>}
-        <img className='hidden' src={imgSrc} onLoad={handleLoaded} />
+        <img className='hidden' src={imgSrc} onLoad={handleLoaded} alt='hidden' />
       </StyledSplashImage>
   }
 
