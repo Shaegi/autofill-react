@@ -4,7 +4,7 @@ import EnterSummonerNamePrompt from './components/SummonerNamePrompt';
 import SplashImage, { SplashImageProps } from './components/SplashImage';
 import { Lane, Champ } from './types';
 import useRollState from './behaviour/useRoleState';
-import { useQuery, useMutation, useApolloClient } from '@apollo/react-hooks';
+import { useQuery,  useApolloClient } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 import SplashScreen from './components/SplashScreen';
 import ConfirmedPanel from './components/ConfirmedPanel';
@@ -41,50 +41,6 @@ const StyledApp = styled.div`
     z-index: 2;
   }
 `
-
-
-
-const BottomBarWrapper = styled.div`  
-  position: fixed;
-  bottom: ${p => p.theme.vspace.l};
-  display: flex;
-  right: ${p => p.theme.hspace.l};
-  button {
-    height: ${p => p.theme.size['3xl']};
-    width: ${p => p.theme.size['3xl']};
-    border-radius: 50%;
-    font-size: 1.5em;
-    display: flex;
-    align-items:center;
-    justify-content: center;
-    cursor: pointer;
-    outline: none;
-    background: ${ p => p.theme.color.primary};
-    border: none;
-    &:hover {
-      box-shadow: 2px 2px #000;
-    }
-  }
-  button + button {
-    margin-left: ${p => p.theme.hspace.xs};
-  }
-
-  .help {
-    font-weight: bold;
-  }
-` 
-
-const BottomBar: React.FC = props => {
-  return <BottomBarWrapper>
-    <button className='help'>
-      ?
-    </button>
-    <button className='filter'>
-      <img src={'filter_alt-24px.svg'} alt='filter' />
-    </button>
-  </BottomBarWrapper>
-}
-
 type DataProviderProps = {
   summonerName?: string
 }
