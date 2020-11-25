@@ -178,7 +178,8 @@ const App: React.FC<AppProps> = (props) => {
       mutation: SelectChampMutation, variables: {
         input: {
           championId: champ.id,
-          summonerName: confirmedName
+          summonerName: confirmedName,
+          lane: role
         }
       }
     })

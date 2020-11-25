@@ -1,6 +1,7 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
 import CloseIcon from '@material-ui/icons/Close';
+import { Champ } from '../types';
 
 type WrapperProps = {
     show: boolean
@@ -21,12 +22,13 @@ const Wrapper = styled.div<WrapperProps>`
     position: absolute;
 `
 
-export type AutofillStatsProps = {
+export type SkinSelectProps = {
     show: boolean
+    champ: Champ
     onHide: () => void
 }
 
-const SkinSelect: React.FC<AutofillStatsProps> = props => {
+const SkinSelect: React.FC<SkinSelectProps> = props => {
     const { show, onHide } = props
     return <Wrapper show={show}>
         Stats

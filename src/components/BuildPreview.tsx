@@ -76,10 +76,9 @@ const TabPanel: React.FC<TabPanelProps> = (props) => {
 
     useEffect(() => {
         if(index === value) {
-            console.log('set loading')
             setLoading(true)
         }
-    },[value])
+    },[index, value])
 
     if(index !== value) {
         return null

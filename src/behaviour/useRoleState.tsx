@@ -1,16 +1,13 @@
-import { useState, useCallback, useMemo, useEffect } from "react"
-import { createLogicalAnd } from "typescript"
+import { useState, useCallback,  useEffect } from "react"
 import { Lane, Champ } from "../types"
 
 
 const getRoleChamps = (allChamps: Champ[], lane: Lane) => {
-    let maxProbability = 0
     // get all champs with selected role within role array
     return allChamps.filter(champ =>  champ.lanes.some(l => l.type === lane)).map(c =>  {
         const laneInfo = c.lanes.find(l => l.type === lane)
-        const resolvedProbability = c.probability ? c.probability  * 100 : laneInfo && (laneInfo.probability) || 1
-        // add up probability to get max 
-        maxProbability += resolvedProbability
+        const resolvedProbability = c.probability ? c.probability  * 100 : laneInfo?.probability || 1
+
         return {
         ...c,
         // multiple probability with 10 to get more concrete numbers

@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Champ } from '../types'
-import styled, { css, keyframes } from 'styled-components'
+import React, { useState, useEffect } from 'react'
+import styled, { css } from 'styled-components'
 import { ConfirmedChampState } from '../App'
 import CloseIcon from '@material-ui/icons/Close';
 import LockIcon from '@material-ui/icons/Lock';
 import TimelineIcon from '@material-ui/icons/Timeline';
 import AutofillStats from './AutofillStats';
-import ProBuilds from './links/ProBuilds'
 import BuildPreview from './BuildPreview';
 import DifficultyBar from './DifficultyBar';
 import SkinSelect from './SkinSelect';
@@ -231,7 +229,7 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
         </div>
         </div>
         <AutofillStats  show={showAutofillStats} onHide={() => setShowAutofillStats(false)} />
-        <SkinSelect  show={showSkinSelect} onHide={() => setShowSkinSelect(false)} />
+        <SkinSelect champ={champ}  show={showSkinSelect} onHide={() => setShowSkinSelect(false)} />
         </>
         }
     </Wrapper>

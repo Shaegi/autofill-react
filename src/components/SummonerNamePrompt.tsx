@@ -169,7 +169,7 @@ const EnterSummonerNamePrompt: React.FC<EnterSummonerNamePromptProps> = props =>
       setShowMinLengthHint(true)
       focus()
     }
-  }, [inputValue])
+  }, [client, hide, inputValue, onConfirm])
 
   const handleKeydown = useCallback((ev: React.KeyboardEvent<HTMLInputElement>) => {
     setShowMinLengthHint(false)
@@ -181,7 +181,7 @@ const EnterSummonerNamePrompt: React.FC<EnterSummonerNamePromptProps> = props =>
       // escape
       hide()
     }
-  }, [handleConfirm])
+  }, [handleConfirm, hide])
 
   const inputRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
