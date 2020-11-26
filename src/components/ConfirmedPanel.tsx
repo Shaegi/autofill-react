@@ -7,7 +7,7 @@ import TimelineIcon from '@material-ui/icons/Timeline';
 import AutofillStats from './AutofillStats';
 import BuildPreview from './BuildPreview';
 import DifficultyBar from './DifficultyBar';
-import SkinSelect from './SkinSelect';
+import SkinSelect from './SkinSelect/SkinSelect';
 
 type WrapperProps = {
     hide: boolean
@@ -218,7 +218,7 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
                 <TimelineIcon />
                 Autofill stats
             </button>
-            <button onClick={() => setShowAutofillStats(true)}>
+            <button onClick={() => setShowSkinSelect(true)}>
                 <TimelineIcon />
                 Skins
             </button>

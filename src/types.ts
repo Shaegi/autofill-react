@@ -15,6 +15,11 @@ export type Champ = {
       key: string | null
       splashArtOffset: number | null
     }
+    skins: {
+      name: string
+      id: string
+      num: number
+    }[]
     masteryPoints: number | null
     masteryLevel: number | null
     probability?: number | null

@@ -38,7 +38,7 @@ const StyledApp = styled.div`
     position: absolute;
     bottom: ${p => p.theme.size.xs};
     right: ${p => p.theme.size.xs};
-    z-index: 2;
+    z-index: 4;
   }
 `
 type DataProviderProps = {
@@ -57,6 +57,11 @@ export const ChampsQuery = gql`
         masteryPoints
         info {
           difficulty
+        }
+        skins {
+          name
+          num
+          id
         }
         layout {
           key
