@@ -54,9 +54,27 @@ const Wrapper = styled.div<WrapperProps>`
 
     .carousel-wrapper {
         max-height: 100vh;
+        position: relative;
+        &::after, &::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 15vh;
+            z-index: 1;
+        }
+        &::after {
+            bottom: 0;
+            background: linear-gradient(0, black 15%, transparent);
+        }
+        &::before {
+            top: 0;
+            background: linear-gradient(180deg, black 15%, transparent);
+        }
     }
 
     .selected-skins {
+
+                
         display: flex;
         width: 20vw;
         flex-wrap: wrap;
@@ -78,6 +96,8 @@ const Wrapper = styled.div<WrapperProps>`
     }
 
     .available-skins {
+
+
         padding-top: ${p => p.theme.size.xs};
         display: flex;
         flex-wrap: wrap;
@@ -147,8 +167,6 @@ const SkinSelect: React.FC<SkinSelectProps> = props => {
         }
     }, [confirmed])
 
-    console.log(skinRolled)
-
     if(confirmed && skinRolled) {
         return <Wrapper show={show} confirmed={confirmed} spinning={spinning} rolledSkin={skinRolled + offset}>
             <div className='content'>
@@ -156,7 +174,7 @@ const SkinSelect: React.FC<SkinSelectProps> = props => {
                     <ul className='selected-skins'>
                         {Array.from(Array(carouselCount).keys()).reduce<any[]>((acc, curr, i) => [...acc, filteredSkins[i % filteredSkins.length]], []).map((skin, index) => {
                             const rolled = index === carouselCount - skinRolled - offset
-                            return <Skin  champ={champ} active={rolled} rolled={rolled} skin={skin} onClick={handleSkinClick} />
+                            return <Skin  champ={champ} active={rolled} rolled={rolled} skin={skin} />
                         })}
                     </ul>
                 </div>

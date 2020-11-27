@@ -6,18 +6,36 @@ const getSkinUrl = (champId: Champ['id'], num: number) => `http://ddragon.league
 const getTransformedName = (name: string) => name.substr(0, 1).toUpperCase() + name.slice(1)
 
 const Wrapper = styled.li<{ active: boolean, rolled?: boolean, highlight?: boolean }>`
-    border: 1px solid transparent;
-    ${p => p.active && css`
-        border-color: ${p.theme.color.primary};
-    `}
-    ${p => p.rolled && css`
-        border-width: 3px;
-    `}
+position: relative;
+    img {
+        user-select: none;
+        border: 1px solid transparent;
+        ${p => p.active && css`
+            border-color: ${p.theme.color.primary};
+        `}
+        ${p => p.rolled && css`
+            border-width: 3px;
+        `}
+        position: relative;
+        z-index: 2;
+    }
+
+    .highlight-bg{
+        z-index: 1;
+        height: 15vh;
+        width: 15vh;
+        transform: translateX(-50%) scale(1.9);
+        top: 0;
+        left: 50%;
+        position: absolute;
+        background: radial-gradient(#c8aa6e 0%,transparent 72%);
+    }
 
     transition: 1s all ease-in-out;
 
     ${p => p.highlight && css`
-        transform: scale(2);
+            z-index: 10;
+            transform: scale(2);
     `}
 `
 
@@ -49,6 +67,7 @@ const Skin: React.FC<SkinProps> = props => {
 
     return <Wrapper key={skin.id} onClick={handleClick} highlight={highlight} active={active} rolled={rolled}>
         <img src={url} alt={transformName} title={transformName} />
+        {highlight && <div className='highlight-bg' />}
     </Wrapper>
 }
 
