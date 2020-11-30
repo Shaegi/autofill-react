@@ -31,9 +31,9 @@ position: relative;
         background: radial-gradient(#c8aa6e 0%,transparent 72%);
     }
 
-    transition: 1s all ease-in-out;
 
     ${p => p.highlight && css`
+            transition: 1s all ease-in-out;
             z-index: 10;
             transform: scale(2);
     `}
@@ -62,10 +62,12 @@ const Skin: React.FC<SkinProps> = props => {
             setTimeout(() => {
                 setHighlight(true)
             }, 400)
+        } else {
+            setHighlight(false)
         }
     }, [rolled])
 
-    return <Wrapper key={skin.id} onClick={handleClick} highlight={highlight} active={active} rolled={rolled}>
+    return <Wrapper key={skin.id} onClick={handleClick} highlight={rolled && highlight} active={active} rolled={rolled}>
         <img src={url} alt={transformName} title={transformName} />
         {highlight && <div className='highlight-bg' />}
     </Wrapper>

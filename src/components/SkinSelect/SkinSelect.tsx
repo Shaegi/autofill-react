@@ -10,6 +10,7 @@ type WrapperProps = {
     confirmed: boolean
     spinning?: boolean
     rolledSkin?: number
+    showRollAgainButton?: boolean
 }
 
 const Wrapper = styled.div<WrapperProps>`
@@ -40,16 +41,27 @@ const Wrapper = styled.div<WrapperProps>`
             }
         }
     }
-
     > .controls {
-        flex-direction: row !important;
-        button {
-            margin-right: ${p => p.theme.size.s};
-        }
+        ${props => !props.confirmed && css`
+            flex-direction: row !important;
+            button {
+                margin-right: ${p => p.theme.size.s};
+            }
 
-        button + button {
-            margin: 0 !important;
-        }
+            button + button {
+                margin: 0 !important;
+            }
+        `}
+    }
+
+    .roll-again {
+        ${p => p.showRollAgainButton ? css`
+            transform: scale(1);
+            transform-origin: top;
+            transition: .2s all ease-in;
+        ` : css`
+            transform: scale(0);
+        `}
     }
 
     .carousel-wrapper {
@@ -71,10 +83,7 @@ const Wrapper = styled.div<WrapperProps>`
             background: linear-gradient(180deg, black 15%, transparent);
         }
     }
-
     .selected-skins {
-
-                
         display: flex;
         width: 20vw;
         flex-wrap: wrap;
@@ -94,10 +103,7 @@ const Wrapper = styled.div<WrapperProps>`
             }
         }
     }
-
     .available-skins {
-
-
         padding-top: ${p => p.theme.size.xs};
         display: flex;
         flex-wrap: wrap;
@@ -107,7 +113,6 @@ const Wrapper = styled.div<WrapperProps>`
         width: 45vw;
         cursor: pointer;
         gap: ${p => p.theme.size.xs};
-
         img {
             width: 14vw;
         }
@@ -124,11 +129,12 @@ export type SkinSelectProps = {
 const SkinSelect: React.FC<SkinSelectProps> = props => {
     const { show, onHide, champ } = props
 
-    const [ownedSkins, setOwnedSkins] = useState<number[]>(champ.skins.map(s => s.num))
+    const [ownedSkins, setOwnedSkins] = useState<number[]>([])
     const [confirmed, setConfirmed] = useState(false)
     const [spinning, setSpinning] = useState(false)
     const [skinRolled, setRolledSkin] = useState<number | null>(null)
     const filteredSkins = champ.skins.filter(skin => ownedSkins.includes(skin.num))
+    const [showRollAgainButton, setShowRollAgainButton] = useState(false)
 
     const handleConfirm = useCallback(() => {
         setConfirmed(true)
@@ -151,35 +157,54 @@ const SkinSelect: React.FC<SkinSelectProps> = props => {
         if(!show) {
             setConfirmed(false)
             setSpinning(false)
+            setRolledSkin(null)
         } else {
-            setOwnedSkins(champ.skins.map(s => s.num))
+            setOwnedSkins([])
         }
     }, [champ.skins, show])
-
-    console.log(skinRolled)
 
 
     useLayoutEffect(() => {
         if(confirmed) {
             setTimeout(() => {
                 setSpinning(true)
+                setTimeout(() => {
+                    setShowRollAgainButton(true)
+                }, 800)
             }, 200)
         }
     }, [confirmed])
 
-    if(confirmed && skinRolled) {
-        return <Wrapper show={show} confirmed={confirmed} spinning={spinning} rolledSkin={skinRolled + offset}>
+    const handleRollAgain = useCallback(() => {
+        setSpinning(false)
+        setRolledSkin(null)
+        setShowRollAgainButton(false)
+        setTimeout(() => {
+            setRolledSkin(Math.floor(Math.random() * filteredSkins.length))
+            setSpinning(true)
+            setTimeout(() => {
+                setShowRollAgainButton(true)
+            }, 600)
+        }, 500)
+    }, [filteredSkins.length]) 
+
+    if(confirmed) {
+        return <Wrapper show={show} confirmed={confirmed} spinning={spinning} rolledSkin={(skinRolled || 0 )+ offset} showRollAgainButton={showRollAgainButton}>
             <div className='content'>
                 <div className='carousel-wrapper'>
                     <ul className='selected-skins'>
                         {Array.from(Array(carouselCount).keys()).reduce<any[]>((acc, curr, i) => [...acc, filteredSkins[i % filteredSkins.length]], []).map((skin, index) => {
-                            const rolled = index === carouselCount - skinRolled - offset
-                            return <Skin  champ={champ} active={rolled} rolled={rolled} skin={skin} />
+                            const rolled = index === carouselCount - (skinRolled || 0) - offset
+                            return <Skin champ={champ} active={rolled} rolled={rolled} skin={skin} />
                         })}
                     </ul>
                 </div>
             </div>
             <div className='controls'>
+             <button onClick={handleRollAgain} className='roll-again'>
+                <CasinoIcon />
+                Roll again
+            </button>
             <button onClick={onHide}>
                 <CloseIcon />
                 Close
