@@ -63,7 +63,11 @@ const Wrapper = styled.div<WrapperProps>`
             transform: scale(0);
         `}
     }
-
+    .confirm-button:disabled {
+        border-color: grey;
+        color: grey;
+    }
+    
     .carousel-wrapper {
         max-height: 100vh;
         position: relative;
@@ -223,7 +227,12 @@ const SkinSelect: React.FC<SkinSelectProps> = props => {
             </div>
         </div>
         <div className='controls'>
-            <button onClick={handleConfirm}>
+            <button 
+                onClick={handleConfirm} 
+                disabled={ownedSkins.length === 0} 
+                className='confirm-button' 
+                title={ownedSkins.length === 0 ? 'Select at least 1 skin' : undefined}
+            >
                 <CasinoIcon />
                 Confirm
             </button>
