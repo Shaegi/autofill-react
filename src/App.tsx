@@ -4,11 +4,10 @@ import EnterSummonerNamePrompt from './components/SummonerNamePrompt';
 import SplashImage, { SplashImageProps } from './components/SplashImage';
 import { Lane, Champ } from './types';
 import useRollState from './behaviour/useRoleState';
-import { useQuery,  useApolloClient } from '@apollo/react-hooks';
-import { gql } from 'apollo-boost';
-import SplashScreen from './components/SplashScreen';
+import { useApolloClient } from '@apollo/react-hooks';
 import ConfirmedPanel from './components/ConfirmedPanel';
 import EmptyLane from './components/EmptyLane';
+import { SelectChampMutation, SelectChampMutationResponse } from './gql/SelectChampMutation';
 
 
 const StyledApp = styled.div`
@@ -41,64 +40,6 @@ const StyledApp = styled.div`
     z-index: 4;
   }
 `
-type DataProviderProps = {
-  summonerName?: string
-}
-
-export const ChampsQuery = gql`
-  query Champs ($summonerName: String) {
-      champs(summonerName: $summonerName) {
-        name
-        key
-        title
-        chestGranted
-        title
-        masteryLevel
-        masteryPoints
-        info {
-          difficulty
-        }
-        skins {
-          name
-          num
-          id
-        }
-        layout {
-          key
-          splashArtOffset
-        }
-        id
-        roles
-        tags
-        lanes {
-          type
-          probability
-        }
-        probability
-      }
-    }
-`
-
-
-
-const DataProvider: React.FC<DataProviderProps> = props => {
-    const [confirmedName, setConfirmedName] = useState<string | null>("")
-    const { data, loading } = useQuery(ChampsQuery, { 
-    variables: {
-      summonerName: confirmedName
-    }
-  })
-
-  if(loading || !data) {
-    return <SplashScreen />
-  }
-
-  return <App 
-    onSummonerNameChange={setConfirmedName}
-    confirmedName={confirmedName}
-    champs={data.champs}
-  />
-}
 
 
 type AppProps = {
@@ -112,13 +53,6 @@ export type ConfirmedChampState = {
   role: Lane,
   roleIndex: number
 } | null
-
-
-const SelectChampMutation = gql`
-mutation selectChamp($input: SelectChampInput) {
-  selectChamp(input: $input)
-}
-`
 
 const App: React.FC<AppProps> = (props) => {
   const { champs, onSummonerNameChange, confirmedName } = props
@@ -135,7 +69,7 @@ const App: React.FC<AppProps> = (props) => {
 
   const handleConfirm = useCallback<SplashImageProps['onConfirm']>((role, champ, index) => {
 
-    client.mutate({
+    client.mutate<SelectChampMutationResponse>({
       mutation: SelectChampMutation, variables: {
         input: {
           championId: champ.id,
@@ -173,4 +107,4 @@ const App: React.FC<AppProps> = (props) => {
   )
 }
 
-export default DataProvider;
+export default App

@@ -4,7 +4,7 @@ import PersonIcon from '@material-ui/icons/Person';
 import CloseIcon from '@material-ui/icons/Close';
 import { Backdrop, CircularProgress } from '@material-ui/core';
 import { useApolloClient } from '@apollo/react-hooks';
-import { ChampsQuery } from '../App';
+import { ChampsQuery } from '../gql/ChampsQuery';
 
 const SummonerNamePromptWrapper = styled.div<{ show: boolean, showHint: boolean, error: boolean, shouldHide: boolean }>`
 
