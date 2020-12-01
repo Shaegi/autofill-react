@@ -2,8 +2,8 @@ import { gql } from "apollo-boost"
 import { Champ } from "../types"
 
 export const ChampsQuery = gql`
-  query Champs ($summonerName: String) {
-      champs(summonerName: $summonerName) {
+  query Champs ($summoner: SummonerInformation) {
+      champs(summoner: $summoner) {
         name
         key
         title
@@ -11,6 +11,11 @@ export const ChampsQuery = gql`
         title
         masteryLevel
         masteryPoints
+        totalConfirmedCount
+        confirmedCount {
+          count
+          lane
+        }
         info {
           difficulty
         }

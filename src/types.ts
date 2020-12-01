@@ -7,7 +7,7 @@ export type Champ = {
       type: string
       probability: number
     }[]
-    title: string
+    title: string 
     info: {
       difficulty: number
     }
@@ -20,6 +20,11 @@ export type Champ = {
       id: string
       num: number
     }[]
+    totalConfirmedCount: number
+    confirmedCount:  {
+      count: number
+      lane: Lane
+    }
     masteryPoints: number | null
     masteryLevel: number | null
     probability?: number | null

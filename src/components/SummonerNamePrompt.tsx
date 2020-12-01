@@ -73,17 +73,31 @@ const SummonerNamePromptWrapper = styled.div<{ show: boolean, showHint: boolean,
           color: ${p => p.theme.color.primary};
         }
     }
-    input {
+
+    .content-wrapper {
+      display: flex;
+      align-items: center;
+    }
+
+    select, input {
       border: 1px solid ${p => p.theme.color.primary};
       background: black;
       outline: none;
       color: ${p => p.theme.color.primary};
-      padding: ${p => p.theme.size.m};
+      padding: 0 ${p => p.theme.size.m};
+      box-sizing: border-box;
+      height: 45px;
+    }
+
+    select {
+      margin-left: ${p => p.theme.size.s};
     }
 
     .search-button {
-      margin-left: ${p => p.theme.size.xs};
+      box-sizing: border-box;
+      margin-left: ${p => p.theme.size.m};
       padding: ${p => p.theme.size.m};
+      height: 45px;
       border: 1px solid ${p => p.theme.color.primary};
     }
   }
@@ -108,6 +122,21 @@ const SummonerNamePromptWrapper = styled.div<{ show: boolean, showHint: boolean,
   }
 `
 
+
+const availableServers = [
+  {label: 'EUW', key: 'euw1'},
+  {label: 'NA', key: 'na1'},
+  {label: 'EUN', key: 'eun1'},
+  {label: 'LATIN 1', key: 'la1'},
+  {label: 'LATIN 2', key: 'la2'},
+  {label: 'JP', key: 'jp1'},
+  {label: 'KR', key: 'kr1'},
+  {label: 'OC', key: 'oc1'},
+  {label: 'RU', key: 'ru'},
+  {label: 'TR', key: 'tr1'},
+  {label: 'BR', key: 'br1'},
+]
+
 type EnterSummonerNamePromptProps = {
   onConfirm: (name: string) => void
   hide: boolean
@@ -118,6 +147,7 @@ const EnterSummonerNamePrompt: React.FC<EnterSummonerNamePromptProps> = props =>
   const { onConfirm, confirmedName, hide: shouldHide } = props
   const [visible, setShow] = useState(false)
   const [inputValue, setInputValue] = useState(confirmedName || '')
+  const [selectedServer, setSelectedServer] = useState(availableServers[0].key)
   const [confirmLoading, setConfirmLoading] = useState(false)
 
   useEffect(() => {
@@ -156,7 +186,10 @@ const EnterSummonerNamePrompt: React.FC<EnterSummonerNamePromptProps> = props =>
 
     if(inputRef.current && inputRef.current.checkValidity()) {
       setConfirmLoading(true)
-      client.query({ query: ChampsQuery, variables: { summonerName: inputValue} }).then(() => {
+      client.query({ query: ChampsQuery, variables: { summoner: {
+        server: selectedServer,
+        name: inputValue
+      }} }).then(() => {
         setConfirmLoading(false)
         onConfirm(inputValue)
         hide()
@@ -169,7 +202,7 @@ const EnterSummonerNamePrompt: React.FC<EnterSummonerNamePromptProps> = props =>
       setShowMinLengthHint(true)
       focus()
     }
-  }, [client, hide, inputValue, onConfirm])
+  }, [client, hide, inputValue, onConfirm, selectedServer])
 
   const handleKeydown = useCallback((ev: React.KeyboardEvent<HTMLInputElement>) => {
     setShowMinLengthHint(false)
@@ -194,6 +227,10 @@ const EnterSummonerNamePrompt: React.FC<EnterSummonerNamePromptProps> = props =>
 
   const theme = useContext(ThemeContext)
 
+  const handleServerSelectChange = useCallback((ev: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedServer(ev.target.value)
+  }, [])
+
 
   return <>
     {visible && <Backdrop open style={{ zIndex: 9 }} onClick={confirmLoading ? undefined:  hide} />}
@@ -211,8 +248,15 @@ const EnterSummonerNamePrompt: React.FC<EnterSummonerNamePromptProps> = props =>
                 <div className='error'>Could not find any summoner with name: {errorName}</div>
                 <div className='hint'>At least 3 characters</div>
               </div>
-              <div>
+              <div className='content-wrapper'>
                 <input ref={inputRef} value={inputValue} onChange={handleInputChange} minLength={3} onKeyDown={handleKeydown} />
+                <select  onChange={handleServerSelectChange} value={selectedServer}>
+                  {availableServers.map(server => {
+                    return <option value={server.key} key={server.key}>
+                      {server.label}
+                    </option>
+                  })}
+                </select>
                 <button className='search-button' onClick={handleConfirm}>Search</button>
               </div>
             </>}

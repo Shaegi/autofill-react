@@ -211,6 +211,12 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
                         <LockIcon />
                         Enter SummonerName to unlock your champ stats
                     </div>}
+                <div>
+                    <h3>Times picked:</h3>
+                        <div>
+                            <span>Total:</span> {champ.totalConfirmedCount}
+                        </div>
+                    </div>
             </div>
         </div>
         <div className='controls'>
