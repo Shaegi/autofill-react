@@ -4,6 +4,7 @@ import { Champ } from "../types"
 export const ChampsQuery = gql`
   query Champs ($summoner: SummonerInformation) {
       champs(summoner: $summoner) {
+        champs {
         name
         key
         title
@@ -36,10 +37,13 @@ export const ChampsQuery = gql`
           probability
         }
         probability
+        }
       }
     }
 `
 
 export type ChampsQueryResponse = {
-    champs: Champ[]
+    champs: {
+      champs: Champ[]
+    }
 }

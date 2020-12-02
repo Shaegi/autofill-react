@@ -5,6 +5,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { Backdrop, CircularProgress } from '@material-ui/core';
 import { useApolloClient } from '@apollo/react-hooks';
 import { ChampsQuery } from '../gql/ChampsQuery';
+import { SummonerInformation } from '../App';
 
 const SummonerNamePromptWrapper = styled.div<{ show: boolean, showHint: boolean, error: boolean, shouldHide: boolean }>`
 
@@ -138,26 +139,28 @@ const availableServers = [
 ]
 
 type EnterSummonerNamePromptProps = {
-  onConfirm: (name: string) => void
+  onConfirm: (summonerInformation: SummonerInformation) => void
   hide: boolean
-  confirmedName?: string | null
+  confirmedSummoner?: SummonerInformation | null
 }
 
 const EnterSummonerNamePrompt: React.FC<EnterSummonerNamePromptProps> = props => {
-  const { onConfirm, confirmedName, hide: shouldHide } = props
+  const { onConfirm, confirmedSummoner, hide: shouldHide } = props
   const [visible, setShow] = useState(false)
-  const [inputValue, setInputValue] = useState(confirmedName || '')
+  const [inputValue, setInputValue] = useState(confirmedSummoner?.name || '')
   const [selectedServer, setSelectedServer] = useState(availableServers[0].key)
   const [confirmLoading, setConfirmLoading] = useState(false)
 
   useEffect(() => {
-    setInputValue(confirmedName || '')
-  }, [confirmedName])
+    setInputValue(confirmedSummoner?.name || '')
+    setSelectedServer(confirmedSummoner?.server || availableServers[0].key)
+  }, [confirmedSummoner])
 
   const hide = useCallback(() => {
     setShow(false)
-    setInputValue(confirmedName || '')
-  }, [confirmedName])
+    setInputValue(confirmedSummoner?.name || '')
+    setSelectedServer(confirmedSummoner?.server || availableServers[0].key)
+  }, [confirmedSummoner])
   const show = useCallback(() => {
     setShow(true)
   }, [])
@@ -191,7 +194,10 @@ const EnterSummonerNamePrompt: React.FC<EnterSummonerNamePromptProps> = props =>
         name: inputValue
       }} }).then(() => {
         setConfirmLoading(false)
-        onConfirm(inputValue)
+        onConfirm({
+          name: inputValue,
+          server: selectedServer
+        })
         hide()
       }).catch(er => {
         setConfirmLoading(false)
@@ -223,7 +229,7 @@ const EnterSummonerNamePrompt: React.FC<EnterSummonerNamePromptProps> = props =>
     }
   }, [visible])
 
-  const hasEnteredName = !!confirmedName
+  const hasEnteredName = !!confirmedSummoner?.name
 
   const theme = useContext(ThemeContext)
 
@@ -261,7 +267,7 @@ const EnterSummonerNamePrompt: React.FC<EnterSummonerNamePromptProps> = props =>
               </div>
             </>}
           </div></> : <>
-          <button className='expander' onClick={show}>{hasEnteredName ? <div className='confirmed'><PersonIcon /><span>{confirmedName}</span></div> : <span>Enter Summoner Name</span>}</button>
+          <button className='expander' onClick={show}>{hasEnteredName ? <div className='confirmed'><PersonIcon /><span>{confirmedSummoner?.name}</span></div> : <span>Enter Summoner Name</span>}</button>
         </>
 
       }

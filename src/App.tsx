@@ -41,12 +41,18 @@ const StyledApp = styled.div`
   }
 `
 
+export type SummonerInformation = {
+  name: string
+  server: string
+}
+
 
 type AppProps = {
   champs: Champ[]
-  confirmedName: string | null
-  onSummonerNameChange: (name: string) => void
+  confirmedSummoner?: SummonerInformation | null
+  onSummonerChange: (summoner: SummonerInformation | null) => void
 }
+
 
 export type ConfirmedChampState = {
   champ: Champ,
@@ -55,17 +61,17 @@ export type ConfirmedChampState = {
 } | null
 
 const App: React.FC<AppProps> = (props) => {
-  const { champs, onSummonerNameChange, confirmedName } = props
+  const { champs, onSummonerChange: onSummonerNameChange, confirmedSummoner } = props
   const { rollState, onRoll, onResetAllLanes: onRollAllLanes, emptyLanes, onResetLane, alreadyRolledChampsState } = useRollState(champs)
   const [confirmedChampState, setConfirmedChamp] = useState<ConfirmedChampState>(null)
 
   const client = useApolloClient()
 
   useEffect(() => {
-    if(confirmedName) {
+    if(confirmedSummoner) {
       onRollAllLanes()
     }
-  }, [confirmedName, onRollAllLanes])
+  }, [confirmedSummoner, onRollAllLanes])
 
   const handleConfirm = useCallback<SplashImageProps['onConfirm']>((role, champ, index) => {
 
@@ -73,7 +79,7 @@ const App: React.FC<AppProps> = (props) => {
       mutation: SelectChampMutation, variables: {
         input: {
           championId: champ.id,
-          summonerName: confirmedName,
+          summonerName: confirmedSummoner?.name,
           lane: role
         }
       }
@@ -84,7 +90,7 @@ const App: React.FC<AppProps> = (props) => {
       role,
       roleIndex: index
     })
-  }, [client, confirmedName]) 
+  }, [client, confirmedSummoner]) 
 
   const handleUnConfirm = useCallback(() => {
     setConfirmedChamp(null)
@@ -92,12 +98,12 @@ const App: React.FC<AppProps> = (props) => {
 
   return (
     <StyledApp>
-      <EnterSummonerNamePrompt onConfirm={onSummonerNameChange} confirmedName={confirmedName} hide={!!confirmedChampState} />
+      <EnterSummonerNamePrompt onConfirm={onSummonerNameChange} confirmedSummoner={confirmedSummoner} hide={!!confirmedChampState} />
       {Object.values(Lane).map((lane, index) => {
         if(emptyLanes.includes(lane)) {
           return <EmptyLane key={lane} lane={lane} onResetLane={onResetLane} rolledChamps={alreadyRolledChampsState[lane]} confirmed={!!confirmedChampState?.champ}  />
         }
-        return <SplashImage isLoggedIn={!!confirmedName} key={lane} champ={rollState[lane]} role={lane} onRoll={onRoll} onConfirm={handleConfirm} confirmedChampState={confirmedChampState} index={index} />
+        return <SplashImage isLoggedIn={!!confirmedSummoner} key={lane} champ={rollState[lane]} role={lane} onRoll={onRoll} onConfirm={handleConfirm} confirmedChampState={confirmedChampState} index={index} />
       })}
       <ConfirmedPanel key={confirmedChampState?.champ.id} confirmedState={confirmedChampState} onUnConfirm={handleUnConfirm} />
       <div className='endorsement'>

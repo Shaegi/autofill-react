@@ -1,17 +1,17 @@
 import { useQuery } from '@apollo/react-hooks'
-import React, { useState } from 'react'
-import App from './App'
+import React from 'react'
+import App, { SummonerInformation } from './App'
+import usePersistedState from './behaviour/usePersistedState'
 import SplashScreen from './components/SplashScreen'
-import { ChampsQuery } from './gql/ChampsQuery'
+import { ChampsQuery, ChampsQueryResponse } from './gql/ChampsQuery'
 
 type DataProviderProps = {
-    summonerName?: string
 }
 const DataContainer: React.FC<DataProviderProps> = props => {
-    const [confirmedName, setConfirmedName] = useState<string | null>("")
-    const { data, loading } = useQuery(ChampsQuery, { 
+    const {state: confirmedSummoner, setState: setConfirmedSummoner} = usePersistedState<SummonerInformation | null>('summoner', null)
+    const { data, loading } = useQuery<ChampsQueryResponse>(ChampsQuery, { 
         variables: {
-        summonerName: confirmedName
+        summoner: confirmedSummoner
         }
     })
 
@@ -20,9 +20,9 @@ const DataContainer: React.FC<DataProviderProps> = props => {
     }
 
     return <App 
-        onSummonerNameChange={setConfirmedName}
-        confirmedName={confirmedName}
-        champs={data.champs}
+        onSummonerChange={setConfirmedSummoner}
+        confirmedSummoner={confirmedSummoner}
+        champs={data.champs.champs}
     />
 }
 
