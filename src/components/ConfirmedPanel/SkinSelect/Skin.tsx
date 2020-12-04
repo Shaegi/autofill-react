@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { Champ } from '../../types'
+import { Champ } from '../../../types'
 
 const getSkinUrl = (champId: Champ['id'], num: number) => `http://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champId}_${num}.jpg`
 const getTransformedName = (name: string) => name.substr(0, 1).toUpperCase() + name.slice(1)

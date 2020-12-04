@@ -5,7 +5,7 @@ import SplashImage, { SplashImageProps } from './components/SplashImage';
 import { Lane, Champ } from './types';
 import useRollState from './behaviour/useRoleState';
 import { useApolloClient } from '@apollo/react-hooks';
-import ConfirmedPanel from './components/ConfirmedPanel';
+import ConfirmedPanel from './components/ConfirmedPanel/ConfirmedPanel';
 import EmptyLane from './components/EmptyLane';
 import { SelectChampMutation, SelectChampMutationResponse } from './gql/SelectChampMutation';
 

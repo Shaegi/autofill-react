@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
-import { ConfirmedChampState } from '../App'
+import { ConfirmedChampState } from '../../App'
 import CloseIcon from '@material-ui/icons/Close';
 import LockIcon from '@material-ui/icons/Lock';
 import TimelineIcon from '@material-ui/icons/Timeline';
 import AutofillStats from './AutofillStats';
-import BuildPreview from './BuildPreview';
+import BuildPreview from '../BuildPreview';
 import DifficultyBar from './DifficultyBar';
 import SkinSelect from './SkinSelect/SkinSelect';
 

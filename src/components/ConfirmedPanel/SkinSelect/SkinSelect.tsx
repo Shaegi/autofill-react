@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 import CloseIcon from '@material-ui/icons/Close';
-import { Champ } from '../../types';
+import { Champ } from '../../../types';
 import Skin from './Skin';
 import  CasinoIcon  from '@material-ui/icons/Casino';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';

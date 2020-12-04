@@ -1,5 +1,5 @@
 import React from 'react'
-import { Champ } from '../../types'
+import { Champ } from '../../../types'
 
 export type ProBuildsProps = {
     champ: Champ
