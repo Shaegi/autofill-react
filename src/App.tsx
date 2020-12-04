@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import styled from 'styled-components'
 import EnterSummonerNamePrompt from './components/SummonerNamePrompt';
 import SplashImage, { SplashImageProps } from './components/SplashImage';
@@ -61,19 +61,23 @@ export type ConfirmedChampState = {
 } | null
 
 const App: React.FC<AppProps> = (props) => {
-  const { champs, onSummonerChange: onSummonerNameChange, confirmedSummoner } = props
+  const { champs, onSummonerChange, confirmedSummoner } = props
   const { rollState, onRoll, onResetAllLanes: onRollAllLanes, emptyLanes, onResetLane, alreadyRolledChampsState } = useRollState(champs)
   const [confirmedChampState, setConfirmedChamp] = useState<ConfirmedChampState>(null)
+  const skipFirstRoll = useRef(true)
 
   const client = useApolloClient()
 
   useEffect(() => {
-    if(confirmedSummoner) {
+    if(skipFirstRoll.current) {
+      skipFirstRoll.current = false
+    } else {
       onRollAllLanes()
     }
+    
   }, [confirmedSummoner, onRollAllLanes])
 
-  const handleConfirm = useCallback<SplashImageProps['onConfirm']>((role, champ, index) => {
+  const handleConfirmChamp = useCallback<SplashImageProps['onConfirm']>((role, champ, index) => {
 
     client.mutate<SelectChampMutationResponse>({
       mutation: SelectChampMutation, variables: {
@@ -92,20 +96,20 @@ const App: React.FC<AppProps> = (props) => {
     })
   }, [client, confirmedSummoner]) 
 
-  const handleUnConfirm = useCallback(() => {
+  const handleUnConfirmChamp = useCallback(() => {
     setConfirmedChamp(null)
   }, [])
 
   return (
     <StyledApp>
-      <EnterSummonerNamePrompt onConfirm={onSummonerNameChange} confirmedSummoner={confirmedSummoner} hide={!!confirmedChampState} />
+      <EnterSummonerNamePrompt onConfirm={onSummonerChange} confirmedSummoner={confirmedSummoner} hide={!!confirmedChampState} />
       {Object.values(Lane).map((lane, index) => {
         if(emptyLanes.includes(lane)) {
           return <EmptyLane key={lane} lane={lane} onResetLane={onResetLane} rolledChamps={alreadyRolledChampsState[lane]} confirmed={!!confirmedChampState?.champ}  />
         }
-        return <SplashImage isLoggedIn={!!confirmedSummoner} key={lane} champ={rollState[lane]} role={lane} onRoll={onRoll} onConfirm={handleConfirm} confirmedChampState={confirmedChampState} index={index} />
+        return <SplashImage isLoggedIn={!!confirmedSummoner} key={lane} champ={rollState[lane]} role={lane} onRoll={onRoll} onConfirm={handleConfirmChamp} confirmedChampState={confirmedChampState} index={index} />
       })}
-      <ConfirmedPanel key={confirmedChampState?.champ.id} confirmedState={confirmedChampState} onUnConfirm={handleUnConfirm} />
+      <ConfirmedPanel key={confirmedChampState?.champ.id} confirmedState={confirmedChampState} onUnConfirm={handleUnConfirmChamp} />
       <div className='endorsement'>
         Autofill isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
       </div>

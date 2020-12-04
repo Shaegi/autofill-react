@@ -3,7 +3,9 @@ import styled, { css } from 'styled-components'
 import CloseIcon from '@material-ui/icons/Close';
 import { Champ } from '../../types';
 import Skin from './Skin';
-import { Casino as CasinoIcon } from '@material-ui/icons';
+import  CasinoIcon  from '@material-ui/icons/Casino';
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import CheckBoxOutlinedIcon from '@material-ui/icons/CheckBoxOutlined';
 
 type WrapperProps = {
     show: boolean
@@ -217,6 +219,8 @@ const SkinSelect: React.FC<SkinSelectProps> = props => {
         </Wrapper>
     }
 
+    const allSelected = ownedSkins.length === champ.skins.length
+
     return <Wrapper show={show} confirmed={confirmed}>
         <div className='content'>
             <div>
@@ -228,12 +232,19 @@ const SkinSelect: React.FC<SkinSelectProps> = props => {
         </div>
         <div className='controls'>
             <button 
+                onClick={() => setOwnedSkins(allSelected ? [] : champ.skins.map(s => s.num))} 
+                className='confirm-button' 
+            >
+                {!allSelected ? <CheckBoxOutlineBlankIcon /> : <CheckBoxOutlinedIcon />}
+                {allSelected ? 'Deselect all' : 'Select all'}
+            </button>
+            <button 
                 onClick={handleConfirm} 
                 disabled={ownedSkins.length === 0} 
                 className='confirm-button' 
                 title={ownedSkins.length === 0 ? 'Select at least 1 skin' : undefined}
             >
-                <CasinoIcon />
+                <CasinoIcon /> 
                 Confirm
             </button>
             <button onClick={onHide}>

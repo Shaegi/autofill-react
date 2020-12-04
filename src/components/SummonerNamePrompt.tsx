@@ -1,13 +1,12 @@
-import React, { useState, useCallback, useEffect, useRef, useContext } from 'react'
-import styled, { css, ThemeContext } from 'styled-components'
+import React, { useState, useCallback, useEffect, useRef } from 'react'
+import styled, { css } from 'styled-components'
 import PersonIcon from '@material-ui/icons/Person';
-import CloseIcon from '@material-ui/icons/Close';
-import { Backdrop, CircularProgress } from '@material-ui/core';
-import { useApolloClient } from '@apollo/react-hooks';
-import { ChampsQuery } from '../gql/ChampsQuery';
+import { Backdrop } from '@material-ui/core';
 import { SummonerInformation } from '../App';
+import LoginSummonerName from './LoginSummonerName';
+import Profile from './Profile';
 
-const SummonerNamePromptWrapper = styled.div<{ show: boolean, showHint: boolean, error: boolean, shouldHide: boolean }>`
+const SummonerNamePromptWrapper = styled.div<{ show: boolean, shouldHide: boolean }>`
 
   transition: 0.2s all ease-in-out;
 
@@ -39,26 +38,7 @@ const SummonerNamePromptWrapper = styled.div<{ show: boolean, showHint: boolean,
     position: relative;
   }
 
-  .error {
-    transform: translateY(-50px);
-    position: absolute;
-    top: 0;
-    ${p => p.error && css`
-      transform: translateY(0);
-    `}
-    transition: 0.2s all ease-in-out;
-    color: ${p => p.theme.color.error};
-  }
-
-  .hint {
-    position: absolute;
-    transition: .2s all ease-in-out;
-    top: 0;
-    transform: translateY(-50px);
-    ${p => p.showHint && css`
-      transform: translateY(0);
-    `}
-  }
+ 
 
   .visibleWrapper {
     background: black;
@@ -124,22 +104,8 @@ const SummonerNamePromptWrapper = styled.div<{ show: boolean, showHint: boolean,
 `
 
 
-const availableServers = [
-  {label: 'EUW', key: 'euw1'},
-  {label: 'NA', key: 'na1'},
-  {label: 'EUN', key: 'eun1'},
-  {label: 'LATIN 1', key: 'la1'},
-  {label: 'LATIN 2', key: 'la2'},
-  {label: 'JP', key: 'jp1'},
-  {label: 'KR', key: 'kr1'},
-  {label: 'OC', key: 'oc1'},
-  {label: 'RU', key: 'ru'},
-  {label: 'TR', key: 'tr1'},
-  {label: 'BR', key: 'br1'},
-]
-
 type EnterSummonerNamePromptProps = {
-  onConfirm: (summonerInformation: SummonerInformation) => void
+  onConfirm: (summonerInformation: SummonerInformation | null) => void
   hide: boolean
   confirmedSummoner?: SummonerInformation | null
 }
@@ -147,80 +113,17 @@ type EnterSummonerNamePromptProps = {
 const EnterSummonerNamePrompt: React.FC<EnterSummonerNamePromptProps> = props => {
   const { onConfirm, confirmedSummoner, hide: shouldHide } = props
   const [visible, setShow] = useState(false)
-  const [inputValue, setInputValue] = useState(confirmedSummoner?.name || '')
-  const [selectedServer, setSelectedServer] = useState(availableServers[0].key)
-  const [confirmLoading, setConfirmLoading] = useState(false)
+  const [preventHide, setPreventHide] = useState(false)
 
-  useEffect(() => {
-    setInputValue(confirmedSummoner?.name || '')
-    setSelectedServer(confirmedSummoner?.server || availableServers[0].key)
-  }, [confirmedSummoner])
 
   const hide = useCallback(() => {
     setShow(false)
-    setInputValue(confirmedSummoner?.name || '')
-    setSelectedServer(confirmedSummoner?.server || availableServers[0].key)
-  }, [confirmedSummoner])
+  }, [])
+
   const show = useCallback(() => {
     setShow(true)
   }, [])
 
-  const [errorName, setError] = useState<string | null>(null)
-  const [showMinLengthHint, setShowMinLengthHint] = useState(false)
-
-  const client = useApolloClient()
-
-  const handleInputChange = useCallback((ev: React.ChangeEvent) => {
-    ev.target instanceof HTMLInputElement &&
-      setInputValue(ev.target.value)
-  }, [])
-
-
-  const handleConfirm = useCallback(() => {
-    if(inputValue.length === 0) {
-      setShowMinLengthHint(true)
-      return
-    }
-    const focus = () => {
-      if(inputRef.current) {
-        inputRef.current.focus()
-      }
-    }
-
-    if(inputRef.current && inputRef.current.checkValidity()) {
-      setConfirmLoading(true)
-      client.query({ query: ChampsQuery, variables: { summoner: {
-        server: selectedServer,
-        name: inputValue
-      }} }).then(() => {
-        setConfirmLoading(false)
-        onConfirm({
-          name: inputValue,
-          server: selectedServer
-        })
-        hide()
-      }).catch(er => {
-        setConfirmLoading(false)
-        setError(inputValue)
-        focus()
-      })
-    } else {
-      setShowMinLengthHint(true)
-      focus()
-    }
-  }, [client, hide, inputValue, onConfirm, selectedServer])
-
-  const handleKeydown = useCallback((ev: React.KeyboardEvent<HTMLInputElement>) => {
-    setShowMinLengthHint(false)
-    setError(null)
-    // enter
-    if (ev.keyCode === 13) {
-      handleConfirm()
-    } else if (ev.keyCode === 27) {
-      // escape
-      hide()
-    }
-  }, [handleConfirm, hide])
 
   const inputRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
@@ -231,50 +134,29 @@ const EnterSummonerNamePrompt: React.FC<EnterSummonerNamePromptProps> = props =>
 
   const hasEnteredName = !!confirmedSummoner?.name
 
-  const theme = useContext(ThemeContext)
 
-  const handleServerSelectChange = useCallback((ev: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedServer(ev.target.value)
-  }, [])
-
+  const handleResetConfirmedSummoner = useCallback(() => {
+    onConfirm(null)
+    hide()
+  }, [hide, onConfirm]) 
 
   return <>
-    {visible && <Backdrop open style={{ zIndex: 9 }} onClick={confirmLoading ? undefined:  hide} />}
-    <SummonerNamePromptWrapper show={visible} error={!!errorName} showHint={showMinLengthHint} shouldHide={shouldHide}>
+    {visible && <Backdrop open style={{ zIndex: 9 }} onClick={() => !preventHide && hide()} />}
+    <SummonerNamePromptWrapper show={visible}  shouldHide={shouldHide}>
       {visible ?
         <>
-          <div className='visibleWrapper'>
-          {confirmLoading ? <div className='loader'>
-              <CircularProgress color={theme.color.primary} />
-              <span>Loading summoner data</span>
-            </div> : <>
-              <h2>Enter your Summoner Name</h2>
-              <button onClick={hide} className='close'><CloseIcon /></button>
-              <div className='hintAndErrorSection'>
-                <div className='error'>Could not find any summoner with name: {errorName}</div>
-                <div className='hint'>At least 3 characters</div>
-              </div>
-              <div className='content-wrapper'>
-                <input ref={inputRef} value={inputValue} onChange={handleInputChange} minLength={3} onKeyDown={handleKeydown} />
-                <select  onChange={handleServerSelectChange} value={selectedServer}>
-                  {availableServers.map(server => {
-                    return <option value={server.key} key={server.key}>
-                      {server.label}
-                    </option>
-                  })}
-                </select>
-                <button className='search-button' onClick={handleConfirm}>Search</button>
-              </div>
-            </>}
-          </div></> : <>
+          <div className='visibleWrapper'> 
+            {confirmedSummoner ? <Profile hide={hide} resetConfirmedSummoner={handleResetConfirmedSummoner} confirmedSummoner={confirmedSummoner}  /> : <LoginSummonerName setPreventHide={setPreventHide} onConfirm={onConfirm} hide={hide} />}
+          </div>
+          </> : <>
           <button className='expander' onClick={show}>{hasEnteredName ? <div className='confirmed'><PersonIcon /><span>{confirmedSummoner?.name}</span></div> : <span>Enter Summoner Name</span>}</button>
         </>
-
       }
-
     </SummonerNamePromptWrapper>
   </>
 }
+
+
 
 
 export default EnterSummonerNamePrompt

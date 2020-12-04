@@ -20,6 +20,8 @@ position: relative;
         z-index: 2;
     }
 
+
+
     .highlight-bg{
         z-index: 1;
         height: 15vh;

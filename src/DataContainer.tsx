@@ -12,6 +12,9 @@ const DataContainer: React.FC<DataProviderProps> = props => {
     const { data, loading } = useQuery<ChampsQueryResponse>(ChampsQuery, { 
         variables: {
         summoner: confirmedSummoner
+        },
+        onError: () => {
+            setConfirmedSummoner(null)
         }
     })
 
