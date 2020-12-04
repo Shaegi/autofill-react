@@ -8,6 +8,7 @@ import AutofillStats from './AutofillStats';
 import BuildPreview from '../BuildPreview';
 import DifficultyBar from './DifficultyBar';
 import SkinSelect from './SkinSelect/SkinSelect';
+import EmojiEmotionsOutlinedIcon from '@material-ui/icons/EmojiEmotionsOutlined';
 
 type WrapperProps = {
     hide: boolean
@@ -121,7 +122,6 @@ const Wrapper = styled.div<WrapperProps>`
         display: flex;
         flex-direction: column;
         bottom: 10%;
-
         > button {
             padding: ${p => p.theme.size.l};
             display: inline-flex;
@@ -212,9 +212,10 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
                         Enter SummonerName to unlock your champ stats
                     </div>}
                 <div>
-                    <h3>Times picked:</h3>
+                    <h3>Times picked</h3>
                         <div>
-                            <span>Total:</span> {champ.totalConfirmedCount}
+                            <span>Total:</span> {champ.totalConfirmedCount || 0} time(s)
+                            <span>On this lane:</span> {champ?.confirmedCount?.find(count => count.lane === persistedConfirmState.role)?.count || 0} time(s)
                         </div>
                     </div>
             </div>
@@ -225,7 +226,7 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
                 Autofill stats
             </button>
             <button onClick={() => setShowSkinSelect(true)}>
-                <TimelineIcon />
+                <EmojiEmotionsOutlinedIcon />   
                 Skins
             </button>
             <button onClick={onUnconfirmed} className='close'>

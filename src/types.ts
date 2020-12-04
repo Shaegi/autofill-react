@@ -24,7 +24,7 @@ export type Champ = {
     confirmedCount:  {
       count: number
       lane: Lane
-    }
+    }[]
     masteryPoints: number | null
     masteryLevel: number | null
     probability?: number | null
