@@ -1,6 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
-import React, { useEffect } from 'react'
-import { setSourceMapRange } from 'typescript'
+import React from 'react'
 import App, { SummonerInformation } from './App'
 import usePersistedState from './behaviour/usePersistedState'
 import SplashScreen from './components/SplashScreen'
@@ -18,7 +17,7 @@ const DataContainer: React.FC<DataProviderProps> = props => {
             setConfirmedSummoner(null)
         }
     })
-    
+
     if(loading || !data?.champs.champs) {
         return <SplashScreen />
     }

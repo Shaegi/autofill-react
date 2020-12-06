@@ -110,7 +110,7 @@ const App: React.FC<AppProps> = (props) => {
         }
         return <SplashImage isLoggedIn={!!confirmedSummoner} key={lane} champ={rollState[lane]} role={lane} onRoll={onRoll} onConfirm={handleConfirmChamp} confirmedChampState={confirmedChampState} index={index} />
       })}
-      <ConfirmedPanel key={confirmedChampState?.champ.id} confirmedState={confirmedChampState} onUnConfirm={handleUnConfirmChamp} />
+      <ConfirmedPanel key={confirmedChampState?.champ.id} confirmedSummoner={confirmedSummoner} confirmedState={confirmedChampState} onUnConfirm={handleUnConfirmChamp} />
       <div className='endorsement'>
         Autofill isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
       </div>

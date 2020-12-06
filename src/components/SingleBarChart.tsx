@@ -13,7 +13,7 @@ const Wrapper = styled.div`
     .single-bar-chart-title {
         font-size: 1.1em;
         margin-bottom: ${p => p.theme.size.xs};
-    }
+        }
 `
 
 type DataPoint = {
@@ -43,20 +43,21 @@ const SingleBarChart: React.FC<SingleBarChartProps> = props => {
 }
 
 type StyledDataPointProps = DataPoint & {
-    isOverflowing?: boolean
+    hasPopover?: boolean
     textColor: string
+    isOverflowing?: boolean
 }
 
 const StyledDataPoint = styled.li<StyledDataPointProps>`
     width: ${p => p.percentage}%;
-    cursor: pointer;
     background: ${p => p.color};
     height: 20px;
     text-align: center;
     line-height: 19px;
     overflow: hidden;
     position: relative;    
-    ${p => p.isOverflowing && css`
+    ${p => p.hasPopover && css`
+        cursor: pointer;
         &:hover {
             opacity: 0.75;
         }
@@ -98,11 +99,13 @@ const DataPointRenderer: React.FC<DataPointRendererProps> = props => {
 
     const resolvedLabel = `${Math.round(percentage)}% ${label}`
 
-    const content = <StyledDataPoint {...dataPoint} ref={listItemRef} isOverflowing={isOverflowing} textColor={textColor}> 
+    const hasPopover = !(!isOverflowing && !hidePercentageInBar)
+
+    const content = <StyledDataPoint {...dataPoint} ref={listItemRef} isOverflowing={isOverflowing} hasPopover={hasPopover} textColor={textColor}> 
         <span ref={labelRef}>{hidePercentageInBar ? label : resolvedLabel}</span>
     </StyledDataPoint>
 
-    if(!isOverflowing && !hidePercentageInBar) {
+    if(!hasPopover) {
         return content
     } 
 

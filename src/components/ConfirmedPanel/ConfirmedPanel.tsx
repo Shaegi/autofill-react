@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
-import { ConfirmedChampState } from '../../App'
+import { ConfirmedChampState, SummonerInformation } from '../../App'
 import CloseIcon from '@material-ui/icons/Close';
 import LockIcon from '@material-ui/icons/Lock';
-import TimelineIcon from '@material-ui/icons/Timeline';
+// import TimelineIcon from '@material-ui/icons/Timeline';
 import AutofillStats from './AutofillStats';
 import BuildPreview from '../BuildPreview';
 import DifficultyBar from './DifficultyBar';
@@ -92,6 +92,26 @@ const Wrapper = styled.div<WrapperProps>`
                 position: absolute; 
                 right: 0;
                 top: 0;
+                
+                .stats {
+                    margin-top: ${p => p.theme.size.m};
+                    .your-history-wrapper {
+                        .mastery {
+                            margin-top: ${p => p.theme.size.xs};
+                            display: flex;
+                            align-items: center;
+                            font-size: 30px;
+                            line-height: 100%;
+                            .mastery-points {
+                                margin-left: ${p => p.theme.size.m};
+                            }
+                            .mastery-level-img {
+                                height: 48px;
+                            }
+                        }
+                    }
+                }
+
         }
     }
 
@@ -141,7 +161,7 @@ const Wrapper = styled.div<WrapperProps>`
 `
 
 type ConfirmedPanelProps = {
-    confirmedSummoner?: string
+    confirmedSummoner?: SummonerInformation | null
     confirmedState: ConfirmedChampState
     onUnConfirm: () => void
 }
@@ -171,7 +191,6 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
     }, [props.confirmedState])
 
 
-    const [showAutofillStats, setShowAutofillStats] = useState(false)
     const [showSkinSelect, setShowSkinSelect] = useState(false)
 
     let champ = null
@@ -198,33 +217,45 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
             <div className='guides'>
                 <BuildPreview champ={champ} lane={persistedConfirmState.role} />
             </div>
-            <div className='stats'>
-                <h3>Difficulty</h3>
-                <DifficultyBar difficulty={champ.info.difficulty} />   
+            <div className='champion-stats stats'>
+                <h2>Champion Stats</h2>
+                <div>
+                    <h3>Difficulty</h3>
+                    <DifficultyBar difficulty={champ.info.difficulty} />   
+                </div>
             </div>
-            <div className='yourHistory'>
-                <h3>Your History</h3>
-                {confirmedSummoner ? <div>
-                        MasteryPoints: ${champ.masteryPoints}
-                        MasteryLevel: ${champ.masteryLevel}
+            <div className='your-stats stats'>
+                <h2>Your Stats</h2>
+                {confirmedSummoner ? <div className='your-history-wrapper'>
+                        <div className='mastery'>
+                            <img src={`./mastery/mastery_level${(champ.masteryLevel || 0) > 1 ? champ.masteryLevel : 0}.png`} className='mastery-level-img' alt='mastery-level-img' />
+                            <div className='mastery-points'>
+                                {new Intl.NumberFormat().format(champ.masteryPoints || 0)} MP
+                            </div>
+                        </div>
                     </div> : <div>
                         <LockIcon />
                         Enter SummonerName to unlock your champ stats
                     </div>}
                 <div>
-                    <h3>Times picked</h3>
+            </div>
+            <div className='autofill-stats stats'>
+                <h2>Autofill Stats</h2> 
+                    <div>
+                        <h3>Times picked</h3>
                         <div>
-                            <span>Total:</span> {champ.totalConfirmedCount || 0} time(s)
-                            <span>On this lane:</span> {champ?.confirmedCount?.find(count => count.lane === persistedConfirmState.role)?.count || 0} time(s)
+                            <div>
+                                <span>All lanes</span> {champ.totalConfirmedCount || 0} times
+                            </div>
+                            <div>
+                                <span>This lane:</span> {champ?.confirmedCount?.find(count => count.lane === persistedConfirmState.role)?.count || 0} times
+                            </div>
                         </div>
                     </div>
+                </div>
             </div>
         </div>
         <div className='controls'>
-            <button onClick={() => setShowAutofillStats(true)}>
-                <TimelineIcon />
-                Autofill stats
-            </button>
             <button onClick={() => setShowSkinSelect(true)}>
                 <EmojiEmotionsOutlinedIcon />   
                 Skins
@@ -235,7 +266,6 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
             </button>
         </div>
         </div>
-        <AutofillStats  show={showAutofillStats} onHide={() => setShowAutofillStats(false)} />
         <SkinSelect champ={champ}  show={showSkinSelect} onHide={() => setShowSkinSelect(false)} />
         </>
         }
