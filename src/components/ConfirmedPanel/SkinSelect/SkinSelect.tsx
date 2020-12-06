@@ -226,7 +226,7 @@ const SkinSelect: React.FC<SkinSelectProps> = props => {
             <div>
                 <h1>Select the skins you own</h1>
                 <ul className='available-skins'>
-                    {champ.skins.map(skin => <Skin champ={champ} active={ownedSkins.includes(skin.num)} skin={skin} onClick={handleSkinClick} />)}
+                    {champ.skins.map(skin => <Skin selectable champ={champ} active={ownedSkins.includes(skin.num)} skin={skin} onClick={handleSkinClick} />)}
                 </ul>
             </div>
         </div>

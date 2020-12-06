@@ -28,7 +28,7 @@ export type Champ = {
     masteryPoints: number | null
     masteryLevel: number | null
     probability?: number | null
-    roles: string[]
+    roles: Role[]
     tags: String[]
   }
   
@@ -40,3 +40,11 @@ export enum Lane  {
     SUPPORT = 'LANE_TYPE_SUPPORT'
   }
   
+export enum Role {
+  MAGE = "Mage",
+  FIGHTER = "Fighter",
+  TANK = "Tank",
+  SUPPORT ="Support",
+  MARKSMAN = "Marksman",
+  ASSASSIN = "Assassin"
+}

@@ -44,6 +44,7 @@ const StyledApp = styled.div`
 export type SummonerInformation = {
   name: string
   server: string
+
 }
 
 

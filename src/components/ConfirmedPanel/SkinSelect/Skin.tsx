@@ -5,7 +5,7 @@ import { Champ } from '../../../types'
 const getSkinUrl = (champId: Champ['id'], num: number) => `http://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champId}_${num}.jpg`
 const getTransformedName = (name: string) => name.substr(0, 1).toUpperCase() + name.slice(1)
 
-const Wrapper = styled.li<{ active: boolean, rolled?: boolean, highlight?: boolean }>`
+const Wrapper = styled.li<{ active: boolean, rolled?: boolean, highlight?: boolean, selectable?: boolean }>`
 position: relative;
     img {
         user-select: none;
@@ -20,8 +20,6 @@ position: relative;
         z-index: 2;
     }
 
-
-
     .highlight-bg{
         z-index: 1;
         height: 15vh;
@@ -32,6 +30,15 @@ position: relative;
         position: absolute;
         background: radial-gradient(#c8aa6e 0%,transparent 72%);
     }
+
+    ${p => p.selectable && css`
+        &:hover {
+            img {
+                opacity: 0.75;
+                border: 1px solid white;
+            }
+        }
+    `}
 
 
     ${p => p.highlight && css`
@@ -45,12 +52,13 @@ type SkinProps = {
     champ: Champ
     skin: Champ['skins'][number]
     active: boolean
+    selectable?: boolean
     rolled?: boolean
     onClick?: (skin: SkinProps['skin']) => void
 }
 
 const Skin: React.FC<SkinProps> = props => {
-    const { champ, skin, onClick, active, rolled } = props
+    const { champ, skin, onClick, active, rolled, selectable } = props
     const transformName = getTransformedName(skin.name)
     const url = getSkinUrl(champ.id, skin.num)
     const handleClick = useCallback(() => {
@@ -69,7 +77,7 @@ const Skin: React.FC<SkinProps> = props => {
         }
     }, [rolled])
 
-    return <Wrapper key={skin.id} onClick={handleClick} highlight={rolled && highlight} active={active} rolled={rolled}>
+    return <Wrapper key={skin.id} onClick={handleClick} highlight={rolled && highlight} active={active} rolled={rolled} selectable={selectable}>
         <img src={url} alt={transformName} title={transformName} />
         {highlight && <div className='highlight-bg' />}
     </Wrapper>
