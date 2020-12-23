@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import  React, { useState, useEffect, useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { ConfirmedChampState, SummonerInformation } from '../../App'
 import CloseIcon from '@material-ui/icons/Close';
@@ -114,8 +114,12 @@ const Wrapper = styled.div<WrapperProps>`
                         }
                     }
                 }
-
         }
+    }
+
+    .locked-message {
+        display: flex;
+        align-items: center;
     }
 
     ${p => p.hide && css`
@@ -252,7 +256,7 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
                                 {new Intl.NumberFormat().format(champ.masteryPoints || 0)} MP
                             </div>
                         </div>
-                    </div> : <div>
+                    </div> : <div className='locked-message'>
                         <LockIcon />
                         Enter SummonerName to unlock your champ stats
                     </div>}
