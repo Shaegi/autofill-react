@@ -7,19 +7,6 @@ const getProBuildsUrl = (champ: Champ) => {
     return `https://www.probuilds.net/champions/details/${champ.key}`
 }
 
-const laneToChampionGGUrlParamMap = {
-    [Lane.BOT]: 'ADC',
-    [Lane.TOP]: 'Top',
-    [Lane.JUNGLE]: 'Jungle',
-    [Lane.MID]: 'Middle',
-    [Lane.SUPPORT]: 'Support'
-}
-
-const getChampionGGURL = (champ: Champ, lane: Lane) => {
-    return `https://champion.gg/champion/${champ.name}${laneToChampionGGUrlParamMap[lane] ? `/${laneToChampionGGUrlParamMap[lane]}` : ''}`
-}
-
-
 const laneToOPGGUrlParamMap = {
     [Lane.BOT]: 'bot',
     [Lane.TOP]: 'top',
@@ -115,11 +102,9 @@ const BuildPreview: React.FC<BuildPreviewProps> = props => {
         <Tabs value={value} onChange={handleChange}>
             <Tab label="OP.gg" />
             <Tab label="ProBuilds.net" />
-            <Tab label="Champion.gg" />
         </Tabs>
         <TabPanel value={value} index={0} url={getOPGGUrl(champ, lane)} />
         <TabPanel value={value} index={1} url={getProBuildsUrl(champ)} />
-        <TabPanel value={value} index={2} url={getChampionGGURL(champ, lane)} />
     </Wrapper>
 }
 
