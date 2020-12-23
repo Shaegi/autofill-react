@@ -16,14 +16,14 @@ const Wrapper = styled.div`
         }
 `
 
-type DataPoint = {
+export type SingleBarChartDataPoint = {
     label: string
     percentage: number
     color: string
 }
 
 export type SingleBarChartProps = {
-    dataPoints: DataPoint[]
+    dataPoints: SingleBarChartDataPoint[]
     title: string
     className?: string
     hidePercentageInBar?: boolean
@@ -42,7 +42,7 @@ const SingleBarChart: React.FC<SingleBarChartProps> = props => {
     </Wrapper>
 }
 
-type StyledDataPointProps = DataPoint & {
+type StyledDataPointProps = SingleBarChartDataPoint & {
     hasPopover?: boolean
     textColor: string
     isOverflowing?: boolean
@@ -74,7 +74,7 @@ const StyledDataPoint = styled.li<StyledDataPointProps>`
 `
 
 type DataPointRendererProps = {
-    dataPoint: DataPoint
+    dataPoint: SingleBarChartDataPoint
     hidePercentageInBar?: boolean
 }
 

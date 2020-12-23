@@ -5,24 +5,7 @@ import { SummonerInformation } from '../App'
 import SingleBarChart from './SingleBarChart';
 import { useQuery } from '@apollo/react-hooks';
 import { ChampsQuery, ChampsQueryResponse } from '../gql/ChampsQuery';
-import { Lane, Role } from '../types'
-
-const laneToColorMap: Record<Lane, string> = {
-    [Lane.BOT]: '#A30B37',
-    [Lane.JUNGLE]: '#8FC0A9',
-    [Lane.TOP]: '#690375',
-    [Lane.MID]: '#0E0E52',
-    [Lane.SUPPORT]: '#FCCA46'
-}
-
-const roleToColorMap: Record<Role, string> = {
-    [Role.MARKSMAN]: '#F17F29',
-    [Role.TANK]: '#8FC0A9',
-    [Role.FIGHTER]: '#690375',
-    [Role.MAGE]: '#0E0E52 ',
-    [Role.SUPPORT]: '#FCCA46',
-    [Role.ASSASSIN]: '#A30B37'
-}
+import { getLaneName, laneToColorMap, roleToColorMap } from '../util';
 
 const Wrapper = styled.div`
     display: flex;
@@ -46,12 +29,6 @@ const Wrapper = styled.div`
         justify-content: flex-end;
     }
 `
-
-const getLaneName = (lane: Lane) => {
-    let resolved = lane.replace('LANE_TYPE_', '')
-
-    return resolved[0] + resolved.substr(1).toLowerCase()
-}
 
 type ProfileProps = {
     confirmedSummoner: SummonerInformation

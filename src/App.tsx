@@ -8,6 +8,7 @@ import { useApolloClient } from '@apollo/react-hooks';
 import ConfirmedPanel from './components/ConfirmedPanel/ConfirmedPanel';
 import EmptyLane from './components/EmptyLane';
 import { SelectChampMutation, SelectChampMutationResponse } from './gql/SelectChampMutation';
+import { gql } from 'apollo-boost';
 
 
 const StyledApp = styled.div`
@@ -44,8 +45,17 @@ const StyledApp = styled.div`
 export type SummonerInformation = {
   name: string
   server: string
-
 }
+
+const ChampFragment = gql`
+  fragment ChampCount on Champ {
+    id
+    lanes {
+      type
+    }
+    __typename
+  }
+`
 
 
 type AppProps = {
@@ -87,6 +97,9 @@ const App: React.FC<AppProps> = (props) => {
           summonerName: confirmedSummoner?.name,
           lane: role
         }
+      },
+      update: () => {
+
       }
     })
 

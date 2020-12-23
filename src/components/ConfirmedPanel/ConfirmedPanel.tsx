@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { ConfirmedChampState, SummonerInformation } from '../../App'
 import CloseIcon from '@material-ui/icons/Close';
 import LockIcon from '@material-ui/icons/Lock';
 // import TimelineIcon from '@material-ui/icons/Timeline';
-import AutofillStats from './AutofillStats';
 import BuildPreview from '../BuildPreview';
 import DifficultyBar from './DifficultyBar';
 import SkinSelect from './SkinSelect/SkinSelect';
 import EmojiEmotionsOutlinedIcon from '@material-ui/icons/EmojiEmotionsOutlined';
+import { Champ } from '../../types';
+import SingleBarChart, { SingleBarChartDataPoint} from '../SingleBarChart'
+import { getLaneName, laneToColorMap } from '../../util';
 
 type WrapperProps = {
     hide: boolean
@@ -94,6 +96,7 @@ const Wrapper = styled.div<WrapperProps>`
                 top: 0;
                 
                 .stats {
+                    max-width: 30vw;
                     margin-top: ${p => p.theme.size.m};
                     .your-history-wrapper {
                         .mastery {
@@ -193,12 +196,28 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
 
     const [showSkinSelect, setShowSkinSelect] = useState(false)
 
-    let champ = null
+    let champ: Champ | null = null
 
+    
     if(persistedConfirmState) {
         champ = persistedConfirmState.champ
     }
-
+    
+    const lanesDataPoints = useMemo(() => {
+        if(!champ) {
+            return []
+        } else {
+            const totalCount = champ.totalConfirmedCount
+            return champ.confirmedCount.reduce<SingleBarChartDataPoint[]>((acc, curr) => {
+                acc.push({
+                    label: getLaneName(curr.lane),
+                    color: laneToColorMap[curr.lane],
+                    percentage: curr.count / totalCount * 100
+                })
+                return acc
+            }, [])
+        }
+    }, [champ]) 
 
     return <Wrapper hide={!props.confirmedState} delay={delay}>
         {champ && persistedConfirmState && <> 
@@ -242,13 +261,13 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
             <div className='autofill-stats stats'>
                 <h2>Autofill Stats</h2> 
                     <div>
-                        <h3>Times picked</h3>
+                        <h3>Total Times picked</h3>
                         <div>
                             <div>
-                                <span>All lanes</span> {champ.totalConfirmedCount || 0} times
+                                <SingleBarChart dataPoints={lanesDataPoints} title='Lanes' />
                             </div>
                             <div>
-                                <span>This lane:</span> {champ?.confirmedCount?.find(count => count.lane === persistedConfirmState.role)?.count || 0} times
+                                <span>Picked </span> {champ.totalConfirmedCount || 0} times across all lanes.
                             </div>
                         </div>
                     </div>
