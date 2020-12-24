@@ -46,12 +46,12 @@ const Wrapper = styled.div<WrapperProps>`
     > .controls {
         ${props => !props.confirmed && css`
             flex-direction: row !important;
-            button {
-                margin-right: ${p => p.theme.size.s};
+            > button {
+                margin-top: 0 !important;
             }
 
             button + button {
-                margin: 0 !important;
+                margin-left: ${p => p.theme.size.s};
             }
         `}
     }

@@ -147,7 +147,7 @@ const Wrapper = styled.div<WrapperProps>`
 
     .controls {
         position: absolute;
-        right: 10%;
+        right: ${p => p.theme.size["3xl"]};
         display: flex;
         flex-direction: column;
         bottom: 10%;
@@ -161,6 +161,10 @@ const Wrapper = styled.div<WrapperProps>`
             }
             font-size: 2.5em;
             border: 1px solid ${p => p.theme.color.primary};
+
+            :hover {
+                background: rgba(255,255,255,0.3);
+            }
         }
 
         button + button {
