@@ -36,6 +36,7 @@ type TabPanelProps = {
 const TabPanelWrapper = styled.div` 
     height: 50vh;
     width: 50vw;
+    margin-top: 8px;
     position: relative;
 
     .loader {
@@ -80,8 +81,16 @@ const TabPanel: React.FC<TabPanelProps> = (props) => {
 
 const Wrapper = styled.div`
     margin-top: ${p => p.theme.size.s};
+    .MuiTab-root {
+        font-weight: bold;
+    }
+    .Mui-selected {
+        color: white;
+    }
     .PrivateTabIndicator-root-1  {
-        background: ${p => p.theme.color.primary};
+        background-repeat: none;
+        transform: translateY(-4px);
+        background: radial-gradient(#e3cea3 0%, transparent 82%);
     }
 `
 
