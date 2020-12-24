@@ -26,7 +26,14 @@ const Wrapper = styled.div<WrapperProps>`
     height: 100%;
     opacity: 1;
     pointer-events: all;
-    transition: 1s all ease-in-out;
+    transform: translate(0vw);
+    transition: .8s all ease-in-out;
+    will-change: transform;
+
+    ${p => p.hide && css`
+        pointer-events: none;
+        transform: translate(100vw);
+    `}
 
     > .innerWrapper {
         color: white;
@@ -122,12 +129,7 @@ const Wrapper = styled.div<WrapperProps>`
         align-items: center;
     }
 
-    ${p => p.hide && css`
-        opacity: 0;   
-        transition-delay: none;
-        pointer-events: none;
-        transform: translate(50vw);
-    `}
+    
 
     .autofillStatsToggle {
         height:  100%;
@@ -289,7 +291,7 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
             </button>
         </div>
         </div>
-        <SkinSelect champ={champ}  show={showSkinSelect} onHide={() => setShowSkinSelect(false)} />
+        {champ && <SkinSelect champ={champ}  show={showSkinSelect} onHide={() => setShowSkinSelect(false)} />}
         </>
         }
     </Wrapper>
