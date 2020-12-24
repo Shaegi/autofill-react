@@ -81,8 +81,10 @@ type StyledSplashImageProps = {
       width: 100%;
       display: flex;
       align-items: center;
+      background-color: transparent;
+      transition: all 0.2s ease-in-out;
       &:hover {
-        background: rgba(255,255,255,0.3);
+        background-color: rgba(255,255,255,0.3);
       }
     }
   

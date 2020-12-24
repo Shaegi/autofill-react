@@ -240,9 +240,9 @@ const SkinSelect: React.FC<SkinSelectProps> = props => {
             </button>
             <button 
                 onClick={handleConfirm} 
-                disabled={ownedSkins.length === 0} 
+                disabled={ownedSkins.length < 2} 
                 className='confirm-button' 
-                title={ownedSkins.length === 0 ? 'Select at least 1 skin' : undefined}
+                title={ownedSkins.length === 2 ? 'Select at least 2 skins' : undefined}
             >
                 <CasinoIcon /> 
                 Confirm
