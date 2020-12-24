@@ -87,7 +87,7 @@ const Wrapper = styled.div`
     .Mui-selected {
         color: white;
     }
-    .PrivateTabIndicator-root-1  {
+    .MuiTabs-indicator  {
         background-repeat: none;
         transform: translateY(-4px);
         background: radial-gradient(#e3cea3 0%, transparent 82%);
