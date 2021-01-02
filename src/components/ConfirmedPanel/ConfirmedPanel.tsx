@@ -202,12 +202,8 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
             set(500)
         }
     }, [props.confirmedState])
-
-
     const [showSkinSelect, setShowSkinSelect] = useState(false)
-
     let champ: Champ | null = null
-
     
     if(persistedConfirmState) {
         champ = persistedConfirmState.champ

@@ -6,7 +6,7 @@ import { SummonerInformation } from '../App'
 import CloseIcon from '@material-ui/icons/Close';
 import { ChampsQuery } from '../gql/ChampsQuery'
 
-const Wrapper = styled.div<{showHint: boolean, error: boolean, }>`
+const Wrapper = styled.div<{showHint: boolean, error: boolean, loading: boolean }>`
    .error {
     transform: translateY(-50px);
     position: absolute;
@@ -16,6 +16,15 @@ const Wrapper = styled.div<{showHint: boolean, error: boolean, }>`
     `}
     transition: 0.2s all ease-in-out;
     color: ${p => p.theme.color.error};
+  }
+
+  .loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    span {
+      margin-left: ${p => p.theme.size.m};
+    }
   }
 
   .hint {
@@ -132,8 +141,8 @@ type LoginSummonerNameProps = {
         setInputValue(ev.target.value)
     }, [])
   
-    return <Wrapper error={!!errorName} showHint={showMinLengthHint}>
-    {confirmLoading ? <div className='loader'>
+    return <Wrapper error={!!errorName} showHint={showMinLengthHint} loading={confirmLoading}>
+    { confirmLoading ? <div className='loader'>
         <CircularProgress color={theme.color.primary} />
         <span>Loading summoner data</span>
       </div> : <>

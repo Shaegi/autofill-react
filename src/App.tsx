@@ -8,6 +8,8 @@ import { useApolloClient } from '@apollo/react-hooks';
 import ConfirmedPanel from './components/ConfirmedPanel/ConfirmedPanel';
 import EmptyLane from './components/EmptyLane';
 import { SelectChampMutation, SelectChampMutationResponse } from './gql/SelectChampMutation';
+import { gql } from 'apollo-boost';
+import ChampCountFragment from './gql/ChampCountFragment';
 
 
 const StyledApp = styled.div`
@@ -64,8 +66,20 @@ const App: React.FC<AppProps> = (props) => {
   const { rollState, onRoll, onResetAllLanes: onRollAllLanes, emptyLanes, onResetLane, alreadyRolledChampsState } = useRollState(champs)
   const [confirmedChampState, setConfirmedChamp] = useState<ConfirmedChampState>(null)
   const skipFirstRoll = useRef(true)
+  const alreadyConfirmedChampIds = useRef<string[]>([])
 
   const client = useApolloClient()
+
+  useEffect(() => {
+    console.log('champs changed')
+    if(confirmedChampState) {
+      setConfirmedChamp(p => p ? ({
+        ...p,
+        champ: rollState[p.role] 
+      }) : null)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rollState])
 
   useEffect(() => {
     if(skipFirstRoll.current) {
@@ -77,6 +91,11 @@ const App: React.FC<AppProps> = (props) => {
   }, [confirmedSummoner, onRollAllLanes])
 
   const handleConfirmChamp = useCallback<SplashImageProps['onConfirm']>((role, champ, index) => {
+    // prevent double confirms
+    if(alreadyConfirmedChampIds.current.some(id => champ.id === id)) {
+      
+    
+    alreadyConfirmedChampIds.current.push(champ.id)
 
     client.mutate<SelectChampMutationResponse>({
       mutation: SelectChampMutation, variables: {
@@ -86,12 +105,39 @@ const App: React.FC<AppProps> = (props) => {
           lane: role
         }
       },
-      update: () => {
-
+      optimisticResponse: {
+        selectChamp: true
+      },
+      update: (cache, res) => {
+        const cacheId = `Champ:` + champ.id
+        const data = cache.readFragment<Champ>({
+          id: cacheId,
+          fragment: ChampCountFragment
+        })
+        if(data) {
+          const nextData = {
+            ...data,
+            totalConfirmedCount: data.totalConfirmedCount + 1,
+            confirmedCount: data.confirmedCount.map(count => {
+              if(count.lane === role) {
+                return {
+                  ...count,
+                  count: count.count + 1
+                }
+              }
+              return count
+            })
+          }
+          cache.writeFragment({
+            id: cacheId,
+            data: nextData,
+            fragment: ChampCountFragment
+          })
+        }
       }
     })
-
-    setConfirmedChamp({
+  } 
+  setConfirmedChamp({
       champ,
       role,
       roleIndex: index

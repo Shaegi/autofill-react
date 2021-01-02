@@ -83,13 +83,7 @@ const SummonerNamePromptWrapper = styled.div<{ show: boolean, shouldHide: boolea
     }
   }
 
-  .loader {
-    display: flex;
-    align-items: center;
-    span {
-      margin-left: ${p => p.theme.size.xs};
-    }
-  }
+
 
   .expander {
     background: black;

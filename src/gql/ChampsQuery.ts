@@ -1,4 +1,5 @@
 import { gql } from "apollo-boost"
+import ChampsFragment from './ChampFragment'
 import { Champ, Lane, Role } from "../types"
 
 export const ChampsQuery = gql`
@@ -23,41 +24,11 @@ export const ChampsQuery = gql`
           }
         }
         champs {
-          name
-          key
-          title
-          chestGranted
-          title
-          masteryLevel
-          masteryPoints
-          totalConfirmedCount
-          confirmedCount {
-            count
-            lane
-          }
-          info {
-            difficulty
-          }
-          skins {
-            name
-            num
-            id
-          }
-          layout {
-            key
-            splashArtOffset
-          }
-          id
-          roles
-          tags
-          lanes {
-            type
-            probability
-          }
-          probability
+          ...Champ
         }
       }
     }
+    ${ChampsFragment}
 `
 
 type SummonerProfile = {
