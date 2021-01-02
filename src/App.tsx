@@ -8,7 +8,6 @@ import { useApolloClient } from '@apollo/react-hooks';
 import ConfirmedPanel from './components/ConfirmedPanel/ConfirmedPanel';
 import EmptyLane from './components/EmptyLane';
 import { SelectChampMutation, SelectChampMutationResponse } from './gql/SelectChampMutation';
-import { gql } from 'apollo-boost';
 import ChampCountFragment from './gql/ChampCountFragment';
 
 
