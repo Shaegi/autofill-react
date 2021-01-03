@@ -34,7 +34,7 @@ type TabPanelProps = {
 }
 
 const TabPanelWrapper = styled.div` 
-    height: 50vh;
+    height: 100%;
     width: 50vw;
     margin-top: 8px;
     position: relative;
@@ -80,6 +80,10 @@ const TabPanel: React.FC<TabPanelProps> = (props) => {
 }
 
 const Wrapper = styled.div`
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
     margin-top: ${p => p.theme.size.s};
     .MuiTab-root {
         font-weight: bold;

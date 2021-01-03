@@ -1,16 +1,12 @@
-import  React, { useState, useEffect, useMemo } from 'react'
+import  React, { useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { ConfirmedChampState, SummonerInformation } from '../../App'
 import CloseIcon from '@material-ui/icons/Close';
-import LockIcon from '@material-ui/icons/Lock';
-// import TimelineIcon from '@material-ui/icons/Timeline';
 import BuildPreview from '../BuildPreview';
-import DifficultyBar from './DifficultyBar';
 import SkinSelect from './SkinSelect/SkinSelect';
 import EmojiEmotionsOutlinedIcon from '@material-ui/icons/EmojiEmotionsOutlined';
 import { Champ } from '../../types';
-import SingleBarChart, { SingleBarChartDataPoint} from '../SingleBarChart'
-import { getLaneName, laneToColorMap } from '../../util';
+import Scores from './scores/Scores';
 
 type WrapperProps = {
     hide: boolean
@@ -98,59 +94,35 @@ const Wrapper = styled.div<WrapperProps>`
         }
 
         .content  {
+                display: flex;
+                height: calc(100% - 40px);
+                flex-direction: column;
+                justify-content: space-between;
                 position: absolute; 
-                right: 0;
+                right: ${p => p.theme.size.m};
+                overflow: hidden;
                 top: 0;
+                margin-bottom: ${p => p.theme.size.xl};
+
+                .guides {
+                    flex-grow: 1;
+                    margin-bottom: ${p => p.theme.size.m};
+                }
                 
-                .stats {
-                    max-width: 30vw;
+                .scores {
+                    display: flex;
                     margin-top: ${p => p.theme.size.m};
-                    .your-history-wrapper {
-                        .mastery {
-                            margin-top: ${p => p.theme.size.xs};
-                            display: flex;
-                            align-items: center;
-                            font-size: 30px;
-                            line-height: 100%;
-                            .mastery-points {
-                                margin-left: ${p => p.theme.size.m};
-                            }
-                            .mastery-level-img {
-                                height: 48px;
-                            }
-                        }
-                    }
                 }
         }
     }
 
-    .locked-message {
-        display: flex;
-        align-items: center;
-    }
-
-    
-
-    .autofillStatsToggle {
-        height:  100%;
-        position: absolute;
-        right: 0;
-        top: 0;
-        background: rgba(255,255,255,0.6);  
-
-        > span {
-            position: absolute;
-            top: 50%;
-            transform: rotate(90deg);
-        }
-    }
-
     .controls {
-        position: absolute;
-        right: ${p => p.theme.size["3xl"]};
+        margin-top: ${p => p.theme.size.m};
         display: flex;
-        flex-direction: column;
-        bottom: 10%;
+        width: 100%;
+        align-items: flex-end;
+        justify-content: flex-end;
+
         > button {
             padding: ${p => p.theme.size.l};
             display: inline-flex;
@@ -168,7 +140,7 @@ const Wrapper = styled.div<WrapperProps>`
         }
 
         button + button {
-            margin-top: ${p => p.theme.size.m};
+            margin-left: ${p => p.theme.size.m};
         }
     }
 `
@@ -209,22 +181,6 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
         champ = persistedConfirmState.champ
     }
     
-    const lanesDataPoints = useMemo(() => {
-        if(!champ) {
-            return []
-        } else {
-            const totalCount = champ.totalConfirmedCount
-            return champ.confirmedCount.reduce<SingleBarChartDataPoint[]>((acc, curr) => {
-                acc.push({
-                    label: getLaneName(curr.lane),
-                    color: laneToColorMap[curr.lane],
-                    percentage: curr.count / totalCount * 100
-                })
-                return acc
-            }, [])
-        }
-    }, [champ]) 
-
     return <Wrapper hide={!props.confirmedState} delay={delay}>
         {champ && persistedConfirmState && <> 
         <div className='innerWrapper'>
@@ -242,53 +198,19 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
             <div className='guides'>
                 <BuildPreview champ={champ} lane={persistedConfirmState.role} />
             </div>
-            <div className='champion-stats stats'>
-                <h2>Champion Stats</h2>
-                <div>
-                    <h3>Difficulty</h3>
-                    <DifficultyBar difficulty={champ.info.difficulty} />   
-                </div>
+            <div className='scores'>
+                <Scores champ={champ} hasSummoner={!!confirmedSummoner} />
             </div>
-            <div className='your-stats stats'>
-                <h2>Your Stats</h2>
-                {confirmedSummoner ? <div className='your-history-wrapper'>
-                        <div className='mastery'>
-                            <img src={`./mastery/mastery_level${(champ.masteryLevel || 0) > 1 ? champ.masteryLevel : 0}.png`} className='mastery-level-img' alt='mastery-level-img' />
-                            <div className='mastery-points'>
-                                {new Intl.NumberFormat().format(champ.masteryPoints || 0)} MP
-                            </div>
-                        </div>
-                    </div> : <div className='locked-message'>
-                        <LockIcon />
-                        Enter SummonerName to unlock your champ stats
-                    </div>}
-                <div>
+            <div className='controls'>
+                <button onClick={() => setShowSkinSelect(true)}>
+                    <EmojiEmotionsOutlinedIcon />   
+                    Skins
+                </button>
+                <button onClick={onUnconfirmed} className='close'>
+                    <CloseIcon />
+                    Close
+                </button>
             </div>
-            <div className='autofill-stats stats'>
-                <h2>Autofill Stats</h2> 
-                    <div>
-                        <h3>Total Times picked</h3>
-                        <div>
-                            <div>
-                                <SingleBarChart dataPoints={lanesDataPoints} title='Lanes' />
-                            </div>
-                            <div>
-                                <span>Picked </span> {champ.totalConfirmedCount || 0} times across all lanes.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div className='controls'>
-            <button onClick={() => setShowSkinSelect(true)}>
-                <EmojiEmotionsOutlinedIcon />   
-                Skins
-            </button>
-            <button onClick={onUnconfirmed} className='close'>
-                <CloseIcon />
-                Close
-            </button>
         </div>
         </div>
         {champ && <SkinSelect champ={champ}  show={showSkinSelect} onHide={() => setShowSkinSelect(false)} />}

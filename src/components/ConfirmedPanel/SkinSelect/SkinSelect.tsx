@@ -44,7 +44,20 @@ const Wrapper = styled.div<WrapperProps>`
         }
     }
     > .controls {
-        ${props => !props.confirmed && css`
+        position: absolute;
+        bottom: ${p => p.theme.size.xl};
+        right: ${p => p.theme.size.m};
+        flex-direction: row !important;
+            > button {
+                margin-top: 0 !important;
+            }
+
+            button + button {
+                margin-left: ${p => p.theme.size.s};
+            }
+        /* ${props => props.confirmed ? css`
+            flex-direction: row;
+        ` : css`
             flex-direction: row !important;
             > button {
                 margin-top: 0 !important;
@@ -53,7 +66,7 @@ const Wrapper = styled.div<WrapperProps>`
             button + button {
                 margin-left: ${p => p.theme.size.s};
             }
-        `}
+        `} */
     }
 
     .roll-again {
@@ -76,7 +89,7 @@ const Wrapper = styled.div<WrapperProps>`
         &::after, &::before {
             content: '';
             position: absolute;
-            width: 100%;
+            width: 80%;
             height: 15vh;
             z-index: 1;
         }
