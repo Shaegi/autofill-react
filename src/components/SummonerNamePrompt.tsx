@@ -41,7 +41,8 @@ const SummonerNamePromptWrapper = styled.div<{ show: boolean, shouldHide: boolea
  
 
   .visibleWrapper {
-    background: black;
+    background: ${p => p.theme.color.background};
+    border-radius: 4px;
     position: relative;
     padding: ${p => p.theme.size.m};
     border: 1px solid ${p => p.theme.color.primary};
@@ -62,7 +63,7 @@ const SummonerNamePromptWrapper = styled.div<{ show: boolean, shouldHide: boolea
 
     select, input {
       border: 1px solid ${p => p.theme.color.primary};
-      background: black;
+      background: transparent;
       outline: none;
       color: ${p => p.theme.color.primary};
       padding: 0 ${p => p.theme.size.m};
@@ -86,7 +87,8 @@ const SummonerNamePromptWrapper = styled.div<{ show: boolean, shouldHide: boolea
 
 
   .expander {
-    background: black;
+    border-radius: 2px;
+    background: ${p => p.theme.color.background};
     padding: ${p => p.theme.size.m};
     border: 1px solid ${p => p.theme.color.primary};
 
@@ -128,6 +130,10 @@ const EnterSummonerNamePrompt: React.FC<EnterSummonerNamePromptProps> = props =>
 
   const hasEnteredName = !!confirmedSummoner?.name
 
+  const handleConfirm: EnterSummonerNamePromptProps['onConfirm'] = useCallback((summoner) => {
+      hide()
+      onConfirm(summoner)
+  },[onConfirm, hide])
 
   const handleResetConfirmedSummoner = useCallback(() => {
     onConfirm(null)
@@ -140,7 +146,7 @@ const EnterSummonerNamePrompt: React.FC<EnterSummonerNamePromptProps> = props =>
       {visible ?
         <>
           <div className='visibleWrapper'> 
-            {confirmedSummoner ? <Profile hide={hide} resetConfirmedSummoner={handleResetConfirmedSummoner} confirmedSummoner={confirmedSummoner}  /> : <LoginSummonerName setPreventHide={setPreventHide} onConfirm={onConfirm} hide={hide} />}
+            {confirmedSummoner ? <Profile hide={hide} resetConfirmedSummoner={handleResetConfirmedSummoner} confirmedSummoner={confirmedSummoner}  /> : <LoginSummonerName setPreventHide={setPreventHide} onConfirm={handleConfirm} hide={hide} />}
           </div>
           </> : <>
           <button className='expander' onClick={show}>{hasEnteredName ? <div className='confirmed'><PersonIcon /><span>{confirmedSummoner?.name}</span></div> : <span>Enter Summoner Name</span>}</button>

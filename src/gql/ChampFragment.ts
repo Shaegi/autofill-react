@@ -12,6 +12,7 @@ export default gql`
         totalConfirmedCount
         confirmedCount {
             count
+            score
             lane
         }
         info {

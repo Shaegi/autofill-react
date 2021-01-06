@@ -38,6 +38,7 @@ const TabPanelWrapper = styled.div`
     width: 50vw;
     margin-top: 8px;
     position: relative;
+    background: rgba(255,255,255,0.1);
 
     .loader {
         position: absolute;
@@ -52,6 +53,7 @@ const TabPanelWrapper = styled.div`
 
 
     > iframe {
+            border: none;
         height: 100%;
         width: 100%;
     }

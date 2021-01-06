@@ -1,4 +1,4 @@
-import React, { useCallback, useState,  useEffect, useRef, useMemo } from 'react'
+import  { useCallback, useState,  useEffect, useRef, useMemo, memo } from 'react'
 import styled from 'styled-components'
 import CheckSharpIcon from '@material-ui/icons/CheckSharp'
 import { Lane, Champ } from '../types'
@@ -239,4 +239,4 @@ export type SplashImageProps = {
       </StyledSplashImage>
   }
 
-  export default React.memo(SplashImage)
+  export default memo(SplashImage)

@@ -18,7 +18,7 @@ const Wrapper = styled.div<WrapperProps>`
     width: 60%; 
     position: absolute;
     left: 40%;
-    background: black;
+    background: ${p => p.theme.color.background};
     height: 100%;
     opacity: 1;
     pointer-events: all;
@@ -199,7 +199,7 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
                 <BuildPreview champ={champ} lane={persistedConfirmState.role} />
             </div>
             <div className='scores'>
-                <Scores champ={champ} hasSummoner={!!confirmedSummoner} />
+                <Scores champ={champ} hasSummoner={!!confirmedSummoner} lane={persistedConfirmState.role} />
             </div>
             <div className='controls'>
                 <button onClick={() => setShowSkinSelect(true)}>

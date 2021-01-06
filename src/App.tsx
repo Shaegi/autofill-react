@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import styled from 'styled-components'
 import EnterSummonerNamePrompt from './components/SummonerNamePrompt';
 import SplashImage, { SplashImageProps } from './components/SplashImage';
@@ -19,7 +19,7 @@ const StyledApp = styled.div`
   overflow: hidden;
   max-height: 100vh;
   height: 100%;
-  background: black;
+  background: ${p => p.theme.color.background};
 
   .MuiCircularProgress-root {
     color: ${p => p.theme.color.primary};

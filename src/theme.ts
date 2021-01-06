@@ -26,6 +26,7 @@ const theme = {
 color: {
     primary: "#c8aa6e",
     primaryLight: "#e3cea3",
+    background: 'linear-gradient(124deg, rgba(30,30,45,1) 0%, rgba(12,11,27,1) 100%)',
     error: 'red'
 },
 size: generateSizes(),

@@ -1,6 +1,7 @@
 import React from 'react'
 import styled, { useTheme } from 'styled-components'
 import { PieChart } from 'react-minimal-pie-chart';
+import ScoreHint from './ScoreHint';
 
 type WrapperProps = {}
 
@@ -9,10 +10,16 @@ const Wrapper = styled.div<WrapperProps>`
     display: flex;
 
     flex-direction: column;
+    .headline {
+        display: flex;
+        justify-content: center;
+        .label {
+            margin-bottom: ${p => p.theme.size.m};
+        }
 
-    .label {
-        text-align: center;
-        margin-bottom: ${p => p.theme.size.m};
+        .score-hint {
+            margin-left: ${p => p.theme.size.s};
+        }
     }
 
     .circle {
@@ -43,15 +50,21 @@ export type CircleDataPoint = {
 export type CircleScoreProps = {
     label: React.ReactNode
     dataPoints?: CircleDataPoint[]
+    title?: string
+    hint?: React.ReactNode
 }
 
 const CircleScore:React.FC<CircleScoreProps> = props => {
     const theme: any = useTheme()
-    const { children, label, dataPoints = [{value: 100, color: theme.color.primary}] } = props
-    return <Wrapper>
-        <span className='label'>
-            {label}
-        </span>
+    const { children, label, dataPoints = [{value: 100, color: theme.color.primary}], title, hint } = props
+    return <Wrapper title={title}>
+
+        <div className='headline'>
+            <span className='label'>
+                {label}
+            </span>
+            {hint  && <ScoreHint>{hint}</ScoreHint>}
+        </div>
         <div className='circle'>
             <PieChart 
                 data={dataPoints}
