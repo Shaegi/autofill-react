@@ -18,7 +18,7 @@ const Wrapper = styled.div<{ confirmed: boolean}>`
     :hover {
         border: 1px solid ${p =>p.theme.color.primary};
     }
-    transition: all .7s ease-in-out, background-position-x 0s ease, background-image 0s ease, border: 0s ease;
+    transition: all .7s ease-in-out, background-position-x 0s ease, background-image 0s ease, border 0s ease;
     .start-over-button {
         display: flex;
         align-items: center;

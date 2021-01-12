@@ -8,7 +8,7 @@ import { ChampsQuery, ChampsQueryResponse } from './gql/ChampsQuery'
 type DataProviderProps = {
 }
 const DataContainer: React.FC<DataProviderProps> = props => {
-    const {state: confirmedSummoner, setState: setConfirmedSummoner} = usePersistedState<SummonerInformation | null>('summoner', null)
+    const [confirmedSummoner,setConfirmedSummoner] = usePersistedState<SummonerInformation | null>('summoner', null)
     const { data, loading } = useQuery<ChampsQueryResponse>(ChampsQuery, { 
         variables: {
         summoner: confirmedSummoner

@@ -2,10 +2,7 @@ import { useCallback, useState } from "react";
 
 type SetState<T> = (action: T | ((prev: T) => T)) => void
 
-export default function usePersistedState<T = undefined>(key: string, initialValue: T): {
-    state: T,
-    setState: SetState<T>}
-    {
+export default function usePersistedState<T = undefined>(key: string, initialValue: T): [T, SetState<T>] {
     
     const [state, dispatchState] = useState<T>(() => {
         const localStorageItem = localStorage.getItem(key)
@@ -16,7 +13,8 @@ export default function usePersistedState<T = undefined>(key: string, initialVal
                 return initialValue || null
             }
         }
-        return localStorageItem !== undefined ? localStorageItem : initialValue
+        console.log(localStorageItem)
+        return localStorageItem != null ? localStorageItem : initialValue
     })
 
     const setState = useCallback<SetState<T>>((dispatch) => {
@@ -36,8 +34,5 @@ export default function usePersistedState<T = undefined>(key: string, initialVal
             })
     }, [key])
 
-    return {
-        state, 
-        setState
-    }
+    return [state, setState]
 }

@@ -1,6 +1,5 @@
-import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import styled from 'styled-components'
-import EnterSummonerNamePrompt from './components/SummonerNamePrompt';
 import SplashImage, { SplashImageProps } from './components/SplashImage';
 import { Lane, Champ } from './types';
 import useRollState from './behaviour/useRoleState';
@@ -9,6 +8,8 @@ import ConfirmedPanel from './components/ConfirmedPanel/ConfirmedPanel';
 import EmptyLane from './components/EmptyLane';
 import { SelectChampMutation, SelectChampMutationResponse } from './gql/SelectChampMutation';
 import ChampCountFragment from './gql/ChampCountFragment';
+import Filter from './components/Filter';
+import SummonerProfile from './components/SummonerProfile/SummonerProfile';
 
 
 const StyledApp = styled.div`
@@ -20,6 +21,16 @@ const StyledApp = styled.div`
   max-height: 100vh;
   height: 100%;
   background: ${p => p.theme.color.background};
+
+  .top-bar {
+    position: absolute;
+    z-index: 99;
+    top: 0%;
+    gap: 16px;
+    justify-content: center;
+    display: flex;
+    width: 100%;
+  }
 
   .MuiCircularProgress-root {
     color: ${p => p.theme.color.primary};
@@ -62,7 +73,7 @@ export type ConfirmedChampState = {
 
 const App: React.FC<AppProps> = (props) => {
   const { champs, onSummonerChange, confirmedSummoner } = props
-  const { rollState, onRoll, onResetAllLanes: onRollAllLanes, emptyLanes, onResetLane, alreadyRolledChampsState } = useRollState(champs)
+  const { rollState, onRoll, onResetAllLanes: onRollAllLanes, emptyLanes, onResetLane, alreadyRolledChampsState, persistFilter, filter } = useRollState(champs)
   const [confirmedChampState, setConfirmedChamp] = useState<ConfirmedChampState>(null)
   const skipFirstRoll = useRef(true)
   const alreadyConfirmedChampIds = useRef<string[]>([])
@@ -149,7 +160,14 @@ const App: React.FC<AppProps> = (props) => {
 
   return (
     <StyledApp>
-      <EnterSummonerNamePrompt onConfirm={onSummonerChange} confirmedSummoner={confirmedSummoner} hide={!!confirmedChampState} />
+      <div className='top-bar'>
+        <SummonerProfile 
+          onConfirm={onSummonerChange}
+          confirmedSummoner={confirmedSummoner}
+          hide={!!confirmedChampState}
+        />
+        <Filter champs={champs} persistFilter={persistFilter} initialFilter={filter} />
+      </div>
       {Object.values(Lane).map((lane, index) => {
         if(emptyLanes.includes(lane)) {
           return <EmptyLane key={lane} lane={lane} onResetLane={onResetLane} rolledChamps={alreadyRolledChampsState[lane]} confirmed={!!confirmedChampState?.champ}  />

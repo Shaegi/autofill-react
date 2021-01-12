@@ -2,11 +2,11 @@ import React, { useState, useCallback, useEffect, useRef } from 'react'
 import styled, { css } from 'styled-components'
 import PersonIcon from '@material-ui/icons/Person';
 import { Backdrop } from '@material-ui/core';
-import { SummonerInformation } from '../App';
 import LoginSummonerName from './LoginSummonerName';
 import Profile from './Profile';
+import { SummonerInformation } from '../../App';
 
-const SummonerNamePromptWrapper = styled.div<{ show: boolean, shouldHide: boolean }>`
+const SummonerNamePromptWrapper = styled.div<{ show: boolean, shouldHide: boolean, confirmed?: boolean }>`
 
   transition: 0.2s all ease-in-out;
 
@@ -14,7 +14,7 @@ const SummonerNamePromptWrapper = styled.div<{ show: boolean, shouldHide: boolea
     transform: translate(-50%, -50%);
     top: 50%;
     left: 50%;
-    width: 20vw;
+    width: ${p.confirmed ? '30vw' : '20vw'};
     height: 20vh;
   ` : css`
     top: 0%;
@@ -142,7 +142,7 @@ const EnterSummonerNamePrompt: React.FC<EnterSummonerNamePromptProps> = props =>
 
   return <>
     {visible && <Backdrop open style={{ zIndex: 9 }} onClick={() => !preventHide && hide()} />}
-    <SummonerNamePromptWrapper show={visible}  shouldHide={shouldHide}>
+    <SummonerNamePromptWrapper show={visible}  shouldHide={shouldHide} confirmed={!!confirmedSummoner}>
       {visible ?
         <>
           <div className='visibleWrapper'> 

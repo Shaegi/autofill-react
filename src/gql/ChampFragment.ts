@@ -6,6 +6,7 @@ export default gql`
         key
         title
         chestGranted
+        version
         title
         masteryLevel
         masteryPoints

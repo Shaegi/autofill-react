@@ -2,9 +2,9 @@ import { useApolloClient } from '@apollo/react-hooks'
 import { CircularProgress } from '@material-ui/core'
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import styled, { css, ThemeContext } from 'styled-components'
-import { SummonerInformation } from '../App'
+import { SummonerInformation } from '../../App'
 import CloseIcon from '@material-ui/icons/Close';
-import { ChampsQuery } from '../gql/ChampsQuery'
+import { ChampsQuery } from '../../gql/ChampsQuery'
 
 const Wrapper = styled.div<{showHint: boolean, error: boolean, loading: boolean }>`
    .error {

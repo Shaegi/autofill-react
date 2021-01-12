@@ -2,6 +2,7 @@ export type Champ = {
     name: string
     id: string 
     key: string
+    version: string
     chestGranted: boolean
     lanes: { 
       type: string
@@ -30,7 +31,7 @@ export type Champ = {
     masteryLevel: number | null
     probability?: number | null
     roles: Role[]
-    tags: String[]
+    tags: string[]
   }
   
 export enum Lane  {

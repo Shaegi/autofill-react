@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useCallback,  useEffect, useRef, useMemo } from "react"
 import { Lane, Champ } from "../types"
+import usePersistedState from "./usePersistedState"
 
 
 const getRoleChamps = (allChamps: Champ[], lane: Lane) => {
@@ -16,14 +17,30 @@ const getRoleChamps = (allChamps: Champ[], lane: Lane) => {
     }}).filter(Boolean)
 }
 
-const getRandomChamp = (champs: RoleChamps, lane: Lane, alreadyRolledChamps: Champ[] = []): Champ => {
-    const randomArr = champs.filter(champ => !alreadyRolledChamps.some(c => c.key === champ.key)).reduce<string[]>((acc, curr) => {
-        const rounded = Math.round(curr.probability)
-        for(let i = 0; i < rounded; i++) {
-            acc.push(curr.id)
+const getRandomChamp = (champs: RoleChamps, lane: Lane, alreadyRolledChamps: Champ[] = [], filter: RollFilter): Champ => {
+
+    const getRandArr = (champs: RoleChamps) => {
+        return champs.filter(champ => !alreadyRolledChamps.some(c => c.key === champ.key)).reduce<string[]>((acc, curr) => {
+            const rounded = Math.round(curr.probability)
+            for(let i = 0; i < rounded; i++) {
+                acc.push(curr.id)
+            }
+            return acc
+        }, [])
+    }
+
+    const { wantedChamps, unwantedChamps } = champs.reduce<{ wantedChamps: RoleChamps, unwantedChamps: RoleChamps }>((acc, curr) => {
+        const shouldFilter = filter.champs.some(c => c.id === curr.id) || filter.tags.some(tag => curr.tags.some(t => t === tag))
+        if(shouldFilter) {
+            acc.unwantedChamps.push(curr)
+        } else {
+            acc.wantedChamps.push(curr)
         }
         return acc
-    }, [])
+    }, { wantedChamps: [], unwantedChamps: [] })
+
+    const wantedChampsRandomArr = getRandArr(wantedChamps)
+    const randomArr = wantedChampsRandomArr.length > 0 ? wantedChampsRandomArr :  getRandArr(unwantedChamps)
 
     const randomChampId = randomArr[Math.floor(Math.random() * randomArr.length)]
 
@@ -34,10 +51,14 @@ const getRandomChamp = (champs: RoleChamps, lane: Lane, alreadyRolledChamps: Cha
 export type RollState = Record<Lane, Champ>
 export type RoleChamps = (Champ  & { probability: number})[]
 type AlreadyRolledChampsState = Record<Lane, Champ[]>
+export type RollFilter = {
+    champs: Champ[],
+    tags: string[]
+}
 
-const getInitialRoleState = (champs: Record<Lane, RoleChamps>): RollState => {
+const getInitialRoleState = (champs: Record<Lane, RoleChamps>, filter: RollFilter): RollState => {
     return Object.values(Lane).reduce<RollState>((acc, curr) => {
-        acc[curr] = getRandomChamp(champs[curr], curr)
+        acc[curr] = getRandomChamp(champs[curr], curr, [], filter)
         return acc
     }, {} as RollState)
 }
@@ -55,10 +76,11 @@ const getInitialRoleChamps = (champs: Champ[]) => {
 
 const useRollState = (champs: Champ[]) => {
     const [roleChamps, setRoleChamps] = useState(() => getInitialRoleChamps(champs))
-    const [rollState, setRollState] = useState<RollState>(() => getInitialRoleState(roleChamps))
+    const [filter, setFilter] = usePersistedState<RollFilter>('filter', { champs: [], tags: [] })
+    const [rollState, setRollState] = useState<RollState>(() => getInitialRoleState(roleChamps, filter))
     const [alreadyRolledChamps, setAlreadyRolledChamps] = useState<AlreadyRolledChampsState>(getInitialAlreadyRolledState(rollState))
     const mounted = useRef(false)
-
+    console.log(rollState)
 
 
     useEffect(() => {
@@ -87,19 +109,23 @@ const useRollState = (champs: Champ[]) => {
     }, [champs])
 
     const handleResetAllLanes = useCallback(() => {
-        const roleState = getInitialRoleState(roleChamps)
+        const roleState = getInitialRoleState(roleChamps, filter)
         setRollState(roleState)
         setAlreadyRolledChamps(getInitialAlreadyRolledState(roleState))
-    }, [roleChamps])
+    }, [roleChamps, filter])
+
+    const handlePersistFilter = useCallback((filter: RollFilter) => {
+        setFilter(filter)
+    }, [])
 
 
     useEffect(() => {
         handleResetAllLanes()
-    }, [handleResetAllLanes, roleChamps])
+    }, [handleResetAllLanes, roleChamps, filter])
 
     const handleRoll = useCallback((role: Lane) => {
         setAlreadyRolledChamps(prevAlreadyRolledChamps => {
-            const nextChamp = getRandomChamp(roleChamps[role], role, prevAlreadyRolledChamps[role])
+            const nextChamp = getRandomChamp(roleChamps[role], role, prevAlreadyRolledChamps[role], filter)
             setRollState(prev => {
                 const next = {...prev, [role]: nextChamp}
                 return next
@@ -108,7 +134,7 @@ const useRollState = (champs: Champ[]) => {
                 ...prevAlreadyRolledChamps, [role]: [...prevAlreadyRolledChamps[role], nextChamp]
             }
         })
-      }, [roleChamps])
+      }, [roleChamps,filter])
 
 
     const handleResetLane = useCallback((role: Lane) => {
@@ -135,7 +161,9 @@ const useRollState = (champs: Champ[]) => {
         alreadyRolledChampsState: alreadyRolledChamps,
         onRoll: handleRoll,
         onResetAllLanes: handleResetAllLanes,
-        onResetLane: handleResetLane
+        onResetLane: handleResetLane,
+        filter,
+        persistFilter: handlePersistFilter
     }
 }
 
