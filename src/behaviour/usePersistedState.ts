@@ -13,7 +13,6 @@ export default function usePersistedState<T = undefined>(key: string, initialVal
                 return initialValue || null
             }
         }
-        console.log(localStorageItem)
         return localStorageItem != null ? localStorageItem : initialValue
     })
 

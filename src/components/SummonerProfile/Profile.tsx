@@ -111,7 +111,7 @@ const Profile: React.FC<ProfileProps> = (props) => {
         return null
     }
 
-    return <Wrapper>
+    return <Wrapper className='summoner-profile'>
         <button onClick={hide} className='close'><CloseIcon /></button>
         <div>
             <h3>Hi {confirmedSummoner.name}</h3>

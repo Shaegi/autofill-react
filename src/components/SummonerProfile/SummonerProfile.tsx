@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import styled from 'styled-components'
 import ModalButton, { ModalButtonApi } from '../ModalButton'
 import PersonIcon from '@material-ui/icons/Person';
@@ -8,7 +8,13 @@ import { SummonerInformation } from '../../App';
 
 type WrapperProps = {}
 
-const Wrapper = styled.div<WrapperProps>``
+const Wrapper = styled.div<WrapperProps>`
+    .visibleWrapper {
+        .summoner-profile {
+            width: 30vw;
+        }
+    }
+`
 
 export type SummonerProfileProps = {
     confirmedSummoner?: SummonerInformation | null
@@ -18,6 +24,7 @@ export type SummonerProfileProps = {
 
 const SummonerProfile:React.FC<SummonerProfileProps> = props => {
     const { confirmedSummoner, hide: shouldHide, onConfirm } = props
+    const [visible, setVisible] = useState(false)
 
     const modalButtonRef = useRef<ModalButtonApi>(null)
     const hasEnteredName = !!confirmedSummoner?.name
@@ -42,8 +49,9 @@ const SummonerProfile:React.FC<SummonerProfileProps> = props => {
 
     return <Wrapper>
         <ModalButton
+            onVisibleChange={setVisible}
             hide={shouldHide}
-            renderModal={confirmedSummoner ? <Profile hide={hide} resetConfirmedSummoner={handleResetConfirmedSummoner} confirmedSummoner={confirmedSummoner}  /> : <LoginSummonerName setPreventHide={setPreventHide} onConfirm={handleConfirm} hide={hide} />}
+            renderModal={confirmedSummoner ? <Profile hide={hide} resetConfirmedSummoner={handleResetConfirmedSummoner} confirmedSummoner={confirmedSummoner}  /> : <LoginSummonerName visible={visible} setPreventHide={setPreventHide} onConfirm={handleConfirm} hide={hide} />}
             renderButton={hasEnteredName ? <div className='confirmed'><PersonIcon /><span>{confirmedSummoner?.name}</span></div> : <span>Enter Summoner Name</span>}
         />
     </Wrapper>

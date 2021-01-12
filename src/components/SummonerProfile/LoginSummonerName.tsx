@@ -59,10 +59,11 @@ type LoginSummonerNameProps = {
     onConfirm: (summoner: SummonerInformation) => void
     setPreventHide: (preventHide: boolean) => void
     hide: () => void
+    visible: boolean
   }
   
   const LoginSummonerName: React.FC<LoginSummonerNameProps> = (props) => {
-    const {  onConfirm, setPreventHide } = props
+    const {  onConfirm, setPreventHide, visible } = props
     const [inputValue, setInputValue] = useState('')
     const [selectedServer, setSelectedServer] = useState(availableServers[0].key)
     const [errorName, setError] = useState<string | null>(null)
@@ -87,6 +88,12 @@ type LoginSummonerNameProps = {
         inputRef.current.focus()
       }
     }, [])
+
+    useEffect(() => {
+      setTimeout(() => {
+        visible && focus()
+      }, 300)
+    }, [visible, focus])
   
     const handleConfirm = useCallback(() => {
       if(inputValue.length === 0) {

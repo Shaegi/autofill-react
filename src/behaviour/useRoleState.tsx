@@ -80,7 +80,6 @@ const useRollState = (champs: Champ[]) => {
     const [rollState, setRollState] = useState<RollState>(() => getInitialRoleState(roleChamps, filter))
     const [alreadyRolledChamps, setAlreadyRolledChamps] = useState<AlreadyRolledChampsState>(getInitialAlreadyRolledState(rollState))
     const mounted = useRef(false)
-    console.log(rollState)
 
 
     useEffect(() => {
@@ -91,21 +90,6 @@ const useRollState = (champs: Champ[]) => {
         if(!mounted.current) {
             return
         }
-        // // update champ references
-        // setRoleChamps(prev => {
-        //     return Object.keys(prev).reduce<Record<string, RoleChamps>>((acc, curr) => {
-        //         acc[curr] = getRoleChamps(champs, curr as Lane)
-        //         return acc
-        //     }, {} as Record<string, RoleChamps>)
-        // })    
-
-        // setRollState(prev => {
-        //     return Object.keys(rollState).reduce<RollState>((acc, curr) => {
-        //         console.log(acc, curr)
-        //         acc[curr as keyof RollState] = champs.find(c => c.id === prev[curr as keyof RollState].id) || prev[curr as keyof RollState] 
-        //         return acc
-        //     }, {} as RollState)
-        // })
     }, [champs])
 
     const handleResetAllLanes = useCallback(() => {
@@ -152,8 +136,6 @@ const useRollState = (champs: Champ[]) => {
             return acc
         }, {} as RollState)
     }, [champs, rollState])
-
-    console.log(resolvedRollState)
 
     return {
         rollState: resolvedRollState,

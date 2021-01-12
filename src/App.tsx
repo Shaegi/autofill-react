@@ -81,7 +81,6 @@ const App: React.FC<AppProps> = (props) => {
   const client = useApolloClient()
 
   useEffect(() => {
-    console.log('champs changed')
     if(confirmedChampState) {
       setConfirmedChamp(p => p ? ({
         ...p,
