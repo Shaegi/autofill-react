@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useRef } from 'react'
 import styled from 'styled-components'
 import ModalButton, { ModalButtonApi } from '../ModalButton'
 import PersonIcon from '@material-ui/icons/Person';
@@ -18,7 +18,6 @@ export type SummonerProfileProps = {
 
 const SummonerProfile:React.FC<SummonerProfileProps> = props => {
     const { confirmedSummoner, hide: shouldHide, onConfirm } = props
-    const [visible, setVisible] = useState(false)
 
     const modalButtonRef = useRef<ModalButtonApi>(null)
     const hasEnteredName = !!confirmedSummoner?.name
@@ -44,7 +43,6 @@ const SummonerProfile:React.FC<SummonerProfileProps> = props => {
     return <Wrapper>
         <ModalButton
             hide={shouldHide}
-            onVisibleChange={setVisible}
             renderModal={confirmedSummoner ? <Profile hide={hide} resetConfirmedSummoner={handleResetConfirmedSummoner} confirmedSummoner={confirmedSummoner}  /> : <LoginSummonerName setPreventHide={setPreventHide} onConfirm={handleConfirm} hide={hide} />}
             renderButton={hasEnteredName ? <div className='confirmed'><PersonIcon /><span>{confirmedSummoner?.name}</span></div> : <span>Enter Summoner Name</span>}
         />

@@ -48,7 +48,7 @@ const Wrapper = styled.div<WrapperProps>`
                 cursor: pointer;
                 background: ${p => p.theme.color.primary};
                 padding: ${p => p.theme.size.xxs};
-
+                
                 &.disabled {
                     background: grey;
                 }
@@ -61,7 +61,13 @@ const Wrapper = styled.div<WrapperProps>`
                 cursor: pointer;
                 width: calc(7.5% - 8px);
                 min-height: 40px;
+                -webkit-user-drag: none;
+                user-select: none;
 
+                img {
+                    -webkit-user-drag: none;
+                    user-select: none;
+                }
                 img {
                     width: 100%;
                 }
@@ -69,8 +75,7 @@ const Wrapper = styled.div<WrapperProps>`
                 &.disabled {
                     img {
                         filter: grayscale(10);
-                        -webkit-user-drag: none;
-                        user-select: none;
+
                     }
 
                     &::after {
