@@ -10,6 +10,7 @@ import { SelectChampMutation, SelectChampMutationResponse } from './gql/SelectCh
 import ChampCountFragment from './gql/ChampCountFragment';
 import Filter from './components/Filter';
 import SummonerProfile from './components/SummonerProfile/SummonerProfile';
+import classNames from 'classnames'
 
 
 const StyledApp = styled.div`
@@ -30,6 +31,11 @@ const StyledApp = styled.div`
     justify-content: center;
     display: flex;
     width: 100%;
+    transition: .4s all ease-in-out;
+
+    &.hidden {
+      transform: translateY(-100%);
+    }
   }
 
   .MuiCircularProgress-root {
@@ -159,7 +165,7 @@ const App: React.FC<AppProps> = (props) => {
 
   return (
     <StyledApp>
-      <div className='top-bar'>
+      <div className={classNames('top-bar', { hidden: !!confirmedChampState})}>
         <SummonerProfile 
           onConfirm={onSummonerChange}
           confirmedSummoner={confirmedSummoner}

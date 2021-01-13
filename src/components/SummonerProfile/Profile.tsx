@@ -45,6 +45,13 @@ const Wrapper = styled.div`
         display: flex;
         justify-content: flex-end;
     }
+    .close {
+        height: ${p => p.theme.size.xxl};
+        svg {
+            height: ${p => p.theme.size.xxl};
+            width: ${p => p.theme.size.xxl};
+        }
+    }
 `
 
 type ProfileProps = {

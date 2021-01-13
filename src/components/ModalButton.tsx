@@ -107,7 +107,7 @@ export type ModalButtonApi = {
     setPreventHide: (prevent: boolean) => void
 }
 
-const ModalButton:React.FC<ModalButtonProps> = forwardRef<ModalButtonApi, ModalButtonProps>((props, ref) => {
+const ModalButton = forwardRef<ModalButtonApi, ModalButtonProps>((props, ref) => {
     const { renderButton: RenderButton, hide: shouldHide, renderModal: RenderModal, onVisibleChange } = props
     const [visible, setShow] = useState(false)
     const [preventHide, setPreventHide] = useState(false)

@@ -1,15 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
-import ModalButton from './ModalButton'
+import ModalButton, { ModalButtonApi } from './ModalButton'
 import { Champ } from '../types'
 import classNames from 'classnames'
 import { RollFilter } from '../behaviour/useRoleState'
 import ScoreHint from './ConfirmedPanel/scores/ScoreHint'
+import CheckBoxOutlinedIcon from '@material-ui/icons/CheckBoxOutlined';
+import CheckBoxOutlineBlankOutlined  from '@material-ui/icons/CheckBoxOutlineBlankOutlined'
+import IndeterminateCheckBoxOutlinedIcon from '@material-ui/icons/IndeterminateCheckBoxOutlined';
+import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 
 type WrapperProps = {}
 
 const Wrapper = styled.div<WrapperProps>`
+    .expander {
+        height: 58px;
+    }
     .filter-modal {
         width: 50vw;
         max-height: 70vh;
@@ -20,10 +27,24 @@ const Wrapper = styled.div<WrapperProps>`
 
         .headline-row {
             display: flex;
+            height: ${p => p.theme.size.xxl};
             align-items: center;
 
             h2, .score-hint {
                 margin-right: ${p => p.theme.size.s};
+            }
+
+            .reset-filter {
+                display: flex;
+                align-items: center;
+            }
+
+            .close {
+                align-self: flex-end;
+                svg {
+                    height: ${p => p.theme.size.xxl};
+                    width: ${p => p.theme.size.xxl};
+                }
             }
         }
 
@@ -110,6 +131,7 @@ const Filter:React.FC<FilterProps> = props => {
     const wasAlreadyVisibleRef = useRef(false)
     const [filter, setFilter] = useState<RollFilter>(initialFilter)
     const [visible, setVisible] = useState(false)
+    const modalButtonApiRef = useRef<ModalButtonApi>(null)
 
     const handleVisibleChange = useCallback((visible) => {
         if(!visible && filterChangedRef.current) {
@@ -159,26 +181,49 @@ const Filter:React.FC<FilterProps> = props => {
         }, [])
     }, [champs.length])
 
-    const resetFilter = () => {
+    const allSelected = filter.champs.length === champs.length && filter.tags.length === tags.length
+    const someSelected = filter.champs.length !== 0 || filter.tags.length !== 0
+
+    const toggleFilter = () => {
         filterChangedRef.current = true
-        setFilter({
-            champs:[],
-            tags: []
-        })
+        if(allSelected || someSelected) {
+            setFilter({
+                champs:[],
+                tags: []
+            })
+        } else {
+            setFilter({
+                champs,
+                tags
+            })
+        }
     }
+
+    const toggleFilterJsx = useMemo(() => {
+        if(allSelected) {
+            return <><CheckBoxOutlinedIcon />Reset Filter</>
+        } else if (someSelected) {
+            return <><IndeterminateCheckBoxOutlinedIcon />Reset Filter</>
+        } 
+        return <><CheckBoxOutlineBlankOutlined />Filter All</>
+    }, [filter,champs, tags])
 
 
     return <Wrapper>
             <ModalButton 
                 renderButton={<span>Filter</span>}
                 onVisibleChange={handleVisibleChange}
+                ref={modalButtonApiRef}
                 renderModal={<div className='filter-modal'>
                     <div className='headline-row'>
                         <h2>Filter</h2>
                         <ScoreHint>Filter a champ/tag will put the filtered champ at the end of the list.</ScoreHint>
-                        {(filter.champs.length > 0 || filter.tags.length > 0) && <button className='reset-filter' onClick={resetFilter}>
-                            Reset Filter
-                        </button>}
+                        <button className='reset-filter' onClick={toggleFilter}>
+                            {toggleFilterJsx}
+                        </button>
+                        <button onClick={modalButtonApiRef.current?.hide} className='close'>
+                            <CloseOutlinedIcon />
+                        </button>
                     </div>
                     <ul className='tag-list'>
                         {tags.map(tag => 

@@ -37,6 +37,14 @@ const Wrapper = styled.div<{showHint: boolean, error: boolean, loading: boolean 
     `}
   }
 
+  .close {
+        height: ${p => p.theme.size.xxl};
+        svg {
+            height: ${p => p.theme.size.xxl};
+            width: ${p => p.theme.size.xxl};
+        }
+    }   
+
 `
 
 

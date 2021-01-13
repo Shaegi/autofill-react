@@ -9,6 +9,10 @@ import { SummonerInformation } from '../../App';
 type WrapperProps = {}
 
 const Wrapper = styled.div<WrapperProps>`
+
+    .expander {
+        height: 58px;
+    }
     .visibleWrapper {
         .summoner-profile {
             width: 30vw;
@@ -51,6 +55,7 @@ const SummonerProfile:React.FC<SummonerProfileProps> = props => {
         <ModalButton
             onVisibleChange={setVisible}
             hide={shouldHide}
+            ref={modalButtonRef}
             renderModal={confirmedSummoner ? <Profile hide={hide} resetConfirmedSummoner={handleResetConfirmedSummoner} confirmedSummoner={confirmedSummoner}  /> : <LoginSummonerName visible={visible} setPreventHide={setPreventHide} onConfirm={handleConfirm} hide={hide} />}
             renderButton={hasEnteredName ? <div className='confirmed'><PersonIcon /><span>{confirmedSummoner?.name}</span></div> : <span>Enter Summoner Name</span>}
         />
