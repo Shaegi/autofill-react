@@ -2,11 +2,11 @@ import  React, { useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { ConfirmedChampState, SummonerInformation } from '../../App'
 import CloseIcon from '@material-ui/icons/Close';
-import BuildPreview from '../BuildPreview';
 import SkinSelect from './SkinSelect/SkinSelect';
 import EmojiEmotionsOutlinedIcon from '@material-ui/icons/EmojiEmotionsOutlined';
 import { Champ } from '../../types';
 import Scores from './scores/Scores';
+import Guides from './Guides/Guides';
 
 type WrapperProps = {
     hide: boolean
@@ -93,7 +93,7 @@ const Wrapper = styled.div<WrapperProps>`
             }    
         }
 
-        .content  {
+        > .content  {
                 display: flex;
                 height: calc(100% - 40px);
                 flex-direction: column;
@@ -196,7 +196,8 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
         </div>
         <div className='content'>
             <div className='guides'>
-                <BuildPreview champ={champ} lane={persistedConfirmState.role} />
+                {/* <BuildPreview champ={champ} lane={persistedConfirmState.role} /> */}
+                <Guides champ={champ} lane={persistedConfirmState.role} />
             </div>
             <div className='scores'>
                 <Scores champ={champ} hasSummoner={!!confirmedSummoner} lane={persistedConfirmState.role} />

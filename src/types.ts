@@ -1,3 +1,42 @@
+
+export type RuneStat = {
+  primary: {
+    keyStone: number
+    perk1: number
+    perk2: number
+    perk3: number
+  }
+  secondary: {
+    perk1: number
+    perk2: number
+  }
+}
+
+export type ItemStatDetail = {
+  id: number
+  wins: number
+  count: number
+}
+
+export type ItemStat = {
+  highestWinrate: ItemStatDetail
+  mostPopular: ItemStatDetail
+}
+
+export type BuildStat = {
+  trinket: ItemStat
+  item0: ItemStat
+  item1: ItemStat
+  item2: ItemStat
+  item3: ItemStat
+  item4: ItemStat
+  item5: ItemStat
+}
+
+export type SummonerSpellStat = {
+  value: [number, number]
+}
+
 export type Champ = {
     name: string
     id: string 
@@ -7,6 +46,21 @@ export type Champ = {
     lanes: { 
       type: string
       probability: number
+      buildStats: BuildStat
+      highestWinrateSummonerSpells: SummonerSpellStat
+      mostPopularSummonerSpells: SummonerSpellStat
+      highestWinrateRunes: {
+        value: RuneStat
+      }
+      mostPopularRunes: {
+        value: RuneStat
+      }
+      mostPopularSkillOrder: {
+        value: number[]
+      }
+      highestWinrateSkillOrder: {
+        value: number[]
+      }
     }[]
     title: string 
     info: {

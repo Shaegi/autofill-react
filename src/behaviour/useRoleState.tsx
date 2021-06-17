@@ -5,6 +5,7 @@ import usePersistedState from "./usePersistedState"
 
 
 const getRoleChamps = (allChamps: Champ[], lane: Lane) => {
+    console.log(allChamps.filter(champ =>  champ.lanes.some(l => l.type === lane)))
     // get all champs with selected role within role array
     return allChamps.filter(champ =>  champ.lanes.some(l => l.type === lane)).map(c =>  {
         const laneInfo = c.lanes.find(l => l.type === lane)
@@ -81,6 +82,8 @@ const useRollState = (champs: Champ[]) => {
     const [alreadyRolledChamps, setAlreadyRolledChamps] = useState<AlreadyRolledChampsState>(getInitialAlreadyRolledState(rollState))
     const mounted = useRef(false)
 
+    console.log(roleChamps, rollState)
+
 
     useEffect(() => {
         setRoleChamps(getInitialRoleChamps(champs))
@@ -131,8 +134,9 @@ const useRollState = (champs: Champ[]) => {
     }, [])
 
     const resolvedRollState = useMemo(() => {
+        console.log(champs)
         return Object.keys(rollState).reduce<RollState>((acc, curr) => {
-            acc[curr as keyof RollState] = champs.find(c => c.id === rollState[curr as keyof RollState].id) || rollState[curr as keyof RollState]
+            acc[curr as keyof RollState] = champs.find(c => c.id === rollState[curr as keyof RollState]?.id) || rollState[curr as keyof RollState]
             return acc
         }, {} as RollState)
     }, [champs, rollState])

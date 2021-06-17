@@ -1,5 +1,31 @@
 import { gql } from "apollo-boost";
 
+export const RuneStatFragment = gql`
+fragment RuneStat on RuneStat {
+    primary {
+        keyStone
+        perk1
+        perk2
+        perk3
+    }
+    secondary {
+        perk1
+        perk2
+    }
+}
+`
+
+export const ItemStatFragment = gql`
+    fragment ItemStat on ItemStat {
+        highestWinrate {
+            id  
+        }
+        mostPopular {
+            id  
+        }
+    }
+`
+
 export default gql`
     fragment Champ on Champ {
         name
@@ -34,7 +60,55 @@ export default gql`
         lanes {
             type
             probability
+            highestWinrateRunes {
+                value {
+                    ...RuneStat
+                }
+            }
+            mostPopularRunes {
+                value {
+                    ...RuneStat
+                }
+            }
+            buildStats {
+                trinket {
+                    ...ItemStat
+                }
+                item0 {
+                    ...ItemStat
+                }
+                item1 {
+                    ...ItemStat
+                }
+                item2 {
+                    ...ItemStat
+                }
+                item3 {
+                    ...ItemStat
+                }
+                item4 {
+                    ...ItemStat
+                }
+                item5 {
+                    ...ItemStat
+                }
+            }
+            highestWinrateSummonerSpells {
+                value
+            }
+            mostPopularSummonerSpells {
+                value
+            }
+            highestWinrateSkillOrder {
+                value
+            }
+            mostPopularSkillOrder {
+                value
+            }
         }
         probability
+       
     }
+    ${ItemStatFragment}
+    ${RuneStatFragment}
 `
