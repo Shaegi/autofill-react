@@ -10,17 +10,95 @@ const structureData: StructureType = structureDataImp;
 type WrapperProps = {};
 
 const Wrapper = styled.div<WrapperProps>`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
   .content {
     display: flex;
-    background: rgba(0,0,0,0.1);
-    padding: ${p => p.theme.size.m};
-    
+    padding: ${(p) => p.theme.size.m};
+
     ul {
       display: flex;
+      align-items: center;
       list-style: none;
+      justify-content: space-between;
 
       img {
         height: 40px;
+      }
+    }
+
+    .rune-tree {
+      background: rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: ${(p) => p.theme.size.m};
+    }
+
+    .rune-tree + .rune-tree {
+      margin-left: ${(p) => p.theme.size.m};
+    }
+
+    .head {
+      margin-bottom: ${(p) => p.theme.size.xs};
+      .keystone + .keystone {
+        margin-left: ${(p) => p.theme.size.s};
+      }
+      .keystone {
+        img {
+          background: ${(p) => p.theme.color.primaryLight}1A;
+          border-radius: 50%;
+          padding: 4px;
+          border: 2px solid ${(p) => p.theme.color.primary}40;
+          height: 40px;
+        }
+        &:not(.selected) {
+          img {
+            border: none;
+            border-color: rgba(211, 211, 211, 0.5);
+            background: none;
+            height: 20px;
+          }
+        }
+      }
+    }
+
+    .tree {
+      flex-grow: 1;
+      justify-content: space-between;
+      display: flex;
+      flex-direction: column;
+      width: 200px;
+
+      ul + ul {
+        margin-top: ${(p) => p.theme.size.xs};
+      }
+      .slot {
+        &.hidden {
+          visibility: hidden;
+        }
+      }
+
+      .slot-rune {
+        width: 25%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:not(.selected) {
+          img {
+            border-color: rgba(211, 211, 211, 0.5);
+            height: 25px;
+          }
+        }
+        img {
+          border: 2px solid ${(p) => p.theme.color.primary};
+          border-radius: 50%;
+          height: 40px;
+        }
       }
     }
 
@@ -38,10 +116,10 @@ const RunePanel: React.FC<RunePanelProps> = (props) => {
   const { stats } = props;
   return (
     <Wrapper>
-      <div className='headline'>Runes</div>
-      <div className='content'>
+      <h3 className="headline">Runes</h3>
+      <div className="content">
         <Tree selected={stats.primary} />
-        <Tree selected={stats.secondary} />
+        <Tree selected={stats.secondary} secondary />
       </div>
     </Wrapper>
   );
@@ -49,19 +127,20 @@ const RunePanel: React.FC<RunePanelProps> = (props) => {
 
 type TreeProps = {
   selected: Record<string, number>;
+  secondary?: boolean;
 };
 
 const Tree: React.FC<TreeProps> = (props) => {
-  const { selected } = props;
+  const { selected, secondary } = props;
   const ids = Object.values(selected);
   const selectedTree = structureData.find((tree) =>
     tree.slots.some((slot) => slot.runes.some((rune) => rune.id === ids[0]))
   );
 
   return (
-    <div>
+    <div className="rune-tree">
       <ul className="head">
-        {structureData.map((tree) => {
+        {structureData.map((tree, index) => {
           const selected = tree.slots.some((slot) =>
             slot.runes.some((rune) => rune.id === ids[0])
           );
@@ -72,9 +151,15 @@ const Tree: React.FC<TreeProps> = (props) => {
           );
         })}
       </ul>
-      <div className="tree">
-        {selectedTree?.slots.map((slot) => {
-          return <Slot slot={slot} selectedIds={ids} />;
+      <div className={classNames("tree", { secondary })}>
+        {selectedTree?.slots.map((slot, index) => {
+          return (
+            <Slot
+              slot={slot}
+              selectedIds={ids}
+              hidden={!!secondary && index === 0}
+            />
+          );
         }) || null}
       </div>
     </div>
@@ -83,17 +168,18 @@ const Tree: React.FC<TreeProps> = (props) => {
 
 type SlotProps = {
   selectedIds: number[];
+  hidden: boolean;
   slot: RuneTree["slots"][number];
 };
 
 const Slot: React.FC<SlotProps> = (props) => {
-  const { selectedIds, slot } = props;
+  const { selectedIds, slot, hidden } = props;
   return (
-    <ul>
+    <ul className={classNames("slot", { hidden })}>
       {slot.runes.map((rune) => {
         const selected = selectedIds.includes(rune.id);
         return (
-          <li className={classNames("slot-rune", { selected })}>
+          <li className={classNames("slot-rune", { selected, hidden })}>
             <img src={rune.icon} alt={rune.name} />
           </li>
         );

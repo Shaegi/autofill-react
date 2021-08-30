@@ -1,86 +1,119 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import styled, { css } from 'styled-components'
-import { Champ } from '../../../types'
+import React, { useCallback, useEffect, useState } from "react";
+import styled, { css } from "styled-components";
+import { Champ } from "../../../types";
 
-const getSkinUrl = (champId: Champ['id'], num: number) => `http://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champId}_${num}.jpg`
-const getTransformedName = (name: string) => name.substr(0, 1).toUpperCase() + name.slice(1)
+const getSkinUrl = (champId: Champ["id"], num: number) =>
+  `http://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champId}_${num}.jpg`;
+const getTransformedName = (name: string) =>
+  name.substr(0, 1).toUpperCase() + name.slice(1);
 
-const Wrapper = styled.li<{ active: boolean, rolled?: boolean, highlight?: boolean, selectable?: boolean }>`
-position: relative;
-    img {
-        user-select: none;
-        border: 1px solid transparent;
-        ${p => p.active && css`
-            border-color: ${p.theme.color.primary};
-        `}
-        ${p => p.rolled && css`
-            border-width: 3px;
-        `}
+const Wrapper = styled.li<{
+  active: boolean;
+  rolled?: boolean;
+  highlight?: boolean;
+  disabled?: boolean;
+  selectable?: boolean;
+}>`
+  position: relative;
+  img {
+    user-select: none;
+    border: 1px solid transparent;
+    ${(p) =>
+      p.active &&
+      css`
+        border-color: ${p.theme.color.primary};
+      `}
+    ${(p) =>
+      p.rolled &&
+      css`
+        border-width: 3px;
+      `}
         position: relative;
-        z-index: 2;
-    }
+    z-index: 2;
+  }
 
-    .highlight-bg{
-        z-index: 1;
-        height: 15vh;
-        width: 15vh;
-        transform: translateX(-50%) scale(1.9);
-        top: 0;
-        left: 50%;
-        position: absolute;
-        background: radial-gradient(#c8aa6e 0%,transparent 72%);
-    }
+  .highlight-bg {
+    z-index: 1;
+    height: 15vh;
+    width: 15vh;
+    transform: translateX(-50%) scale(1.9);
+    top: 0;
+    left: 50%;
+    position: absolute;
+    background: radial-gradient(#c8aa6e 0%, transparent 72%);
+  }
 
-    ${p => p.selectable && css`
-        &:hover {
-            img {
-                opacity: 0.75;
-                border: 1px solid white;
-            }
+  ${(p) =>
+    p.disabled &&
+    css`
+      img {
+        opacity: 0.6;
+      }
+    `}
+
+  ${(p) =>
+    p.selectable &&
+    css`
+      &:hover {
+        img {
+          opacity: 0.75;
+          border: 1px solid white;
         }
+      }
     `}
 
-
-    ${p => p.highlight && css`
-            transition: 1s all ease-in-out;
-            z-index: 10;
-            transform: scale(2);
+  ${(p) =>
+    p.highlight &&
+    css`
+      transition: 1s all ease-in-out;
+      z-index: 10;
+      transform: scale(2);
     `}
-`
+`;
 
 type SkinProps = {
-    champ: Champ
-    skin: Champ['skins'][number]
-    active: boolean
-    selectable?: boolean
-    rolled?: boolean
-    onClick?: (skin: SkinProps['skin']) => void
-}
+  champ: Champ;
+  skin: Champ["skins"][number];
+  active: boolean;
+  selectable?: boolean;
+  anyRolled?: boolean;
+  onClick?: (skin: SkinProps["skin"]) => void;
+};
 
-const Skin: React.FC<SkinProps> = props => {
-    const { champ, skin, onClick, active, rolled, selectable } = props
-    const transformName = getTransformedName(skin.name)
-    const url = getSkinUrl(champ.id, skin.num)
-    const handleClick = useCallback(() => {
-        onClick?.(skin)
-    }, [onClick, skin])
+const Skin: React.FC<SkinProps> = (props) => {
+  const { champ, skin, onClick, active, anyRolled, selectable } = props;
+  const transformName = getTransformedName(skin.name);
+  const url = getSkinUrl(champ.id, skin.num);
+  const handleClick = useCallback(() => {
+    onClick?.(skin);
+  }, [onClick, skin]);
 
-    const [highlight, setHighlight] = useState(false)
+  const [highlight, setHighlight] = useState(false);
 
-    useEffect(() => {
-        if(rolled) {
-            setTimeout(() => {
-                setHighlight(true)
-            }, 400)
-        } else {
-            setHighlight(false)
-        }
-    }, [rolled])
+  useEffect(() => {
+    if (anyRolled) {
+      setTimeout(() => {
+        setHighlight(true);
+      }, 400);
+    } else {
+      setHighlight(false);
+    }
+  }, [anyRolled, active]);
 
-    return <Wrapper key={skin.id} onClick={handleClick} highlight={rolled && highlight} active={active} rolled={rolled} selectable={selectable}>
-        <img src={url} alt={transformName} title={transformName} />
-        {highlight && <div className='highlight-bg' />}
+  return (
+    <Wrapper
+      key={skin.id}
+      onClick={handleClick}
+      highlight={active && highlight}
+      active={active}
+      rolled={active}
+      disabled={anyRolled && !active && highlight}
+      selectable={selectable}
+    >
+      <img src={url} alt={transformName} title={transformName} />
+      {highlight && active && <div className="highlight-bg" />}
     </Wrapper>
-}
+  );
+};
 
-export default Skin
+export default Skin;

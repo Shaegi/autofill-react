@@ -17,12 +17,8 @@ fragment RuneStat on RuneStat {
 
 export const ItemStatFragment = gql`
     fragment ItemStat on ItemStat {
-        highestWinrate {
-            id  
-        }
-        mostPopular {
-            id  
-        }
+        highestWinrate 
+        mostPopular 
     }
 `
 
@@ -94,10 +90,18 @@ export default gql`
                 }
             }
             highestWinrateSummonerSpells {
-                value
+                value {
+                    name
+                    id
+                    image
+                }
             }
             mostPopularSummonerSpells {
-                value
+                value {
+                    name
+                    id
+                    image
+                }
             }
             highestWinrateSkillOrder {
                 value

@@ -19,8 +19,8 @@ export type ItemStatDetail = {
 }
 
 export type ItemStat = {
-  highestWinrate: ItemStatDetail
-  mostPopular: ItemStatDetail
+  highestWinrate: string
+  mostPopular: string
 }
 
 export type BuildStat = {
@@ -33,8 +33,14 @@ export type BuildStat = {
   item5: ItemStat
 }
 
+export type SummonerSpellDetail = {
+  name: string
+  id: string
+  image: string
+}
+
 export type SummonerSpellStat = {
-  value: [number, number]
+  value: [SummonerSpellDetail, SummonerSpellDetail]
 }
 
 export type Champ = {
