@@ -6,12 +6,21 @@ import { StatsType } from "../Guides";
 type WrapperProps = {};
 
 const Wrapper = styled.div<WrapperProps>`
+  display: inline-flex;
+  flex-direction: column;
+  h3 {
+    white-space: nowrap;
+  }
   > div {
+    margin-top: ${(p) => p.theme.size.m};
     display: flex;
-    gap: 8px;
+    gap: ${(p) => p.theme.size.xs};
+    background: rgba(0, 0, 0, 0.1);
+    padding: ${(p) => p.theme.size.xs};
+    justify-content: space-evenly;
   }
   img {
-    height: 40px;
+    width: ${(p) => p.theme.size.xxl};
   }
 `;
 
@@ -34,7 +43,7 @@ const SummonerSpellsPanel: React.FC<SummonerSpellsPanelProps> = (props) => {
         {stat.map((spell) => {
           return (
             <div key={spell.name}>
-              <img src={"/spell/" + spell.image} />
+              <img alt={spell.name} src={"/spell/" + spell.image} />
             </div>
           );
         })}

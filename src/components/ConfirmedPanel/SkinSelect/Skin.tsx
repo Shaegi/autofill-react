@@ -17,18 +17,13 @@ const Wrapper = styled.li<{
   position: relative;
   img {
     user-select: none;
-    border: 1px solid transparent;
+    border: 3px solid transparent;
     ${(p) =>
       p.active &&
       css`
         border-color: ${p.theme.color.primary};
       `}
-    ${(p) =>
-      p.rolled &&
-      css`
-        border-width: 3px;
-      `}
-        position: relative;
+    position: relative;
     z-index: 2;
   }
 
@@ -57,7 +52,7 @@ const Wrapper = styled.li<{
       &:hover {
         img {
           opacity: 0.75;
-          border: 1px solid white;
+          border-color: white;
         }
       }
     `}

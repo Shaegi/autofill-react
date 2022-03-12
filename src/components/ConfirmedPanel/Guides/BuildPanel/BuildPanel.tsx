@@ -10,7 +10,12 @@ const structure: ItemStructure = structureImp;
 type WrapperProps = {};
 
 const Wrapper = styled.div<WrapperProps>`
+  display: inline-flex;
+  flex-direction: column;
   > .content {
+    margin-top: ${(p) => p.theme.size.m};
+    min-width: ${(p) => p.theme.size.raw.xxl * 5 + p.theme.size.raw.xs * 4}px;
+    padding: ${(p) => p.theme.size.xs};
     display: flex;
     background: rgba(0, 0, 0, 0.1);
   }
@@ -33,7 +38,6 @@ export type BuildPanelProps = {
 
 const BuildPanel: React.FC<BuildPanelProps> = (props) => {
   const { stats, type } = props;
-  console.log(stats);
   return (
     <Wrapper>
       <h3 className="headline">Build</h3>

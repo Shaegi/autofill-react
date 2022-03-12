@@ -54,6 +54,7 @@ const Wrapper = styled.div<WrapperProps>`
     position: absolute;
     bottom: ${(p) => p.theme.size.xl};
     right: ${(p) => p.theme.size.m};
+    z-index: 100;
     flex-direction: row !important;
     > button {
       margin-top: 0 !important;
@@ -225,7 +226,6 @@ const SkinSelect: React.FC<SkinSelectProps> = (props) => {
     }, 50);
   }, [filteredSkins.length]);
 
-  console.log(skinRolled);
   if (confirmed) {
     return (
       <Wrapper

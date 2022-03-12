@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import styled, { css } from "styled-components";
 import { ConfirmedChampState, SummonerInformation } from "../../App";
 import CloseIcon from "@material-ui/icons/Close";
@@ -25,6 +25,14 @@ const Wrapper = styled.div<WrapperProps>`
   transition: 0.8s all ease-in-out;
   will-change: transform;
 
+  .top {
+    margin-top: ${(p) => p.theme.size.l};
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
   ${(p) =>
     p.hide &&
     css`
@@ -43,22 +51,18 @@ const Wrapper = styled.div<WrapperProps>`
       background: rgba(255, 255, 255, 0.8);
       /* background: rgba(11, 198, 227, .85); */
       flex-direction: column;
+      min-width: 13vw;
       position: relative;
       transition: 1s all ease-in-out;
       transition-delay: 0.3s;
       z-index: 4;
-      transform: translate(-50%, 20%);
-
-      ${(p) =>
-        p.hide &&
-        css`
-          transform: translate(50%, 20%);
-        `}
+      transform: translate(-90%, 20%);
 
       .titleBorder {
         clip-path: polygon(100% 100%, -200% 100%, 100% -200%);
         position: absolute;
         left: 0px;
+        min-width: 13vw;
         top: 0px;
 
         /* border: 1px solid ${(p) => p.theme.color.primary}; */
@@ -98,16 +102,16 @@ const Wrapper = styled.div<WrapperProps>`
       display: flex;
       height: calc(100% - 40px);
       flex-direction: column;
-      justify-content: space-between;
       position: absolute;
-      right: ${(p) => p.theme.size.m};
+      left: ${(p) => p.theme.size["4xl"]};
+      right: ${(p) => p.theme.size["m"]};
       overflow: hidden;
       top: 0;
       margin-bottom: ${(p) => p.theme.size.xl};
 
       .guides {
-        margin-top: 20vh;
         flex-grow: 1;
+        overflow: hidden;
         margin-bottom: ${(p) => p.theme.size.m};
       }
 
@@ -156,6 +160,7 @@ type ConfirmedPanelProps = {
 const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
   const { onUnConfirm: onUnconfirmed, confirmedSummoner } = props;
   const [delay, setDelay] = useState(500);
+  const titleRef = useRef<HTMLDivElement>(null);
 
   // do this so we can have an animation on cancel
   const [persistedConfirmState, setPersistedConfirmState] =
@@ -180,18 +185,19 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
     }
   }, [props.confirmedState]);
   const [showSkinSelect, setShowSkinSelect] = useState(false);
-  let champ: Champ | null = null;
-
-  if (persistedConfirmState) {
-    champ = persistedConfirmState.champ;
-  }
+  const champ: Champ | null = useMemo(() => {
+    if (persistedConfirmState) {
+      return persistedConfirmState.champ;
+    }
+    return null;
+  }, [persistedConfirmState]);
 
   return (
     <Wrapper hide={!props.confirmedState} delay={delay}>
       {champ && persistedConfirmState && (
         <>
           <div className="innerWrapper">
-            <div className="title">
+            <div className="title" ref={titleRef}>
               <div className="titleBorder" />
               <h1>{champ.name}</h1>
               <h2>{champ.title}</h2>
@@ -202,26 +208,30 @@ const ConfirmedPanel: React.FC<ConfirmedPanelProps> = (props) => {
               </ul>
             </div>
             <div className="content">
-              <div className="guides">
-                {/* <BuildPreview champ={champ} lane={persistedConfirmState.role} /> */}
-                <Guides champ={champ} lane={persistedConfirmState.role} />
+              <div className="top">
+                <div className="guides">
+                  {/* <BuildPreview champ={champ} lane={persistedConfirmState.role} /> */}
+                  <Guides champ={champ} lane={persistedConfirmState.role} />
+                </div>
+                <div className="scores">
+                  <Scores
+                    champ={champ}
+                    hasSummoner={!!confirmedSummoner}
+                    lane={persistedConfirmState.role}
+                  />
+                </div>
               </div>
-              <div className="scores">
-                <Scores
-                  champ={champ}
-                  hasSummoner={!!confirmedSummoner}
-                  lane={persistedConfirmState.role}
-                />
-              </div>
-              <div className="controls">
-                <button onClick={() => setShowSkinSelect(true)}>
-                  <EmojiEmotionsOutlinedIcon />
-                  Skins
-                </button>
-                <button onClick={onUnconfirmed} className="close">
-                  <CloseIcon />
-                  Close
-                </button>
+              <div className="bottom">
+                <div className="controls">
+                  <button onClick={() => setShowSkinSelect(true)}>
+                    <EmojiEmotionsOutlinedIcon />
+                    Skins
+                  </button>
+                  <button onClick={onUnconfirmed} className="close">
+                    <CloseIcon />
+                    Close
+                  </button>
+                </div>
               </div>
             </div>
           </div>

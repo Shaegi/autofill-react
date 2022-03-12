@@ -7,17 +7,32 @@ import classNames from "classnames";
 
 const structureData: StructureType = structureDataImp;
 
+const KEYSTONE_HEIGHT = 3.5;
+const RUNE_HEIGHT = 3;
+const RUNE_NOT_SELECTED_HEIGHT = 3.25;
+
 type WrapperProps = {};
 
 const Wrapper = styled.div<WrapperProps>`
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  flex-grow: 1;
 
   .content {
     display: flex;
     padding: ${(p) => p.theme.size.m};
+
+    .no-data {
+      height: 20vh;
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 4px;
+      width: 20vw;
+      color: ${(p) => p.theme.color.error};
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
     ul {
       display: flex;
@@ -26,7 +41,7 @@ const Wrapper = styled.div<WrapperProps>`
       justify-content: space-between;
 
       img {
-        height: 40px;
+        height: ${KEYSTONE_HEIGHT}vh;
       }
     }
 
@@ -53,14 +68,14 @@ const Wrapper = styled.div<WrapperProps>`
           border-radius: 50%;
           padding: 4px;
           border: 2px solid ${(p) => p.theme.color.primary}40;
-          height: 40px;
+          height: ${KEYSTONE_HEIGHT}vh;
         }
         &:not(.selected) {
           img {
             border: none;
             border-color: rgba(211, 211, 211, 0.5);
             background: none;
-            height: 20px;
+            height: ${RUNE_HEIGHT}vh;
           }
         }
       }
@@ -68,10 +83,10 @@ const Wrapper = styled.div<WrapperProps>`
 
     .tree {
       flex-grow: 1;
+      width: 100%;
       justify-content: space-between;
       display: flex;
       flex-direction: column;
-      width: 200px;
 
       ul + ul {
         margin-top: ${(p) => p.theme.size.xs};
@@ -91,13 +106,13 @@ const Wrapper = styled.div<WrapperProps>`
         &:not(.selected) {
           img {
             border-color: rgba(211, 211, 211, 0.5);
-            height: 25px;
+            height: ${RUNE_NOT_SELECTED_HEIGHT}vh;
           }
         }
         img {
           border: 2px solid ${(p) => p.theme.color.primary};
           border-radius: 50%;
-          height: 40px;
+          height: ${RUNE_HEIGHT}vh;
         }
       }
     }
@@ -114,12 +129,19 @@ export type RunePanelProps = {
 
 const RunePanel: React.FC<RunePanelProps> = (props) => {
   const { stats } = props;
+  console.log(props);
   return (
     <Wrapper>
       <h3 className="headline">Runes</h3>
       <div className="content">
-        <Tree selected={stats.primary} />
-        <Tree selected={stats.secondary} secondary />
+        {stats ? (
+          <>
+            <Tree selected={stats.primary} />
+            <Tree selected={stats.secondary} secondary />
+          </>
+        ) : (
+          <div className="no-data">No rune data available</div>
+        )}
       </div>
     </Wrapper>
   );

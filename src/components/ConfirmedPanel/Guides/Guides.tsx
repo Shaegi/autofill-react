@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { Champ, Lane } from "../../../types";
 import BuildPanel from "./BuildPanel/BuildPanel";
 import RunePanel from "./RunePanel/RunePanel";
+import TipsPanel from "./TipsPanel/TipsPanel";
 import SkillsPanel from "./SkillsPanel/SkillsPanel";
 import SummonerSpellsPanel from "./SummonerSpellsPanel/SummonerSpellsPanel";
 
@@ -14,7 +15,6 @@ const Wrapper = styled.div<WrapperProps>`
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  margin-top: ${(p) => p.theme.size.s};
   .MuiTab-root {
     font-weight: bold;
   }
@@ -56,14 +56,14 @@ const Guides: React.FC<GuidesProps> = (props) => {
         <Tab label="Most Popular" />
       </Tabs>
       <TabPanel
-        champName={champ.name}
+        champ={champ}
         value={value}
         index={0}
         stats={stats}
         type={StatsType.HIGHEST_WINRATE}
       />
       <TabPanel
-        champName={champ.name}
+        champ={champ}
         value={value}
         index={1}
         stats={stats}
@@ -75,12 +75,15 @@ const Guides: React.FC<GuidesProps> = (props) => {
 
 const TabPanelWrapper = styled.div`
   height: 100%;
-  width: 50vw;
+
+  overflow: auto;
   margin-top: ${(p) => p.theme.size.xs};
   padding: ${(p) => p.theme.size.m};
   position: relative;
   display: flex;
   flex-wrap: wrap;
+  flex-grow: 1;
+  align-items: center;
   border-radius: ${(p) => p.theme.size.xxs};
   background: rgba(255, 255, 255, 0.1);
 
@@ -90,13 +93,13 @@ const TabPanelWrapper = styled.div`
 type TabPanelProps = {
   type: StatsType;
   index: number;
+  champ: Champ;
   value: number;
-  champName: string;
   stats: Champ["lanes"][number];
 };
 
 const TabPanel: React.FC<TabPanelProps> = (props) => {
-  const { index, value, stats, type, champName } = props;
+  const { champ, index, value, stats, type } = props;
 
   if (index !== value) {
     return null;
@@ -107,13 +110,30 @@ const TabPanel: React.FC<TabPanelProps> = (props) => {
       <RunePanel
         stats={
           type === StatsType.HIGHEST_WINRATE
-            ? stats.highestWinrateRunes.value
-            : stats.mostPopularRunes.value
+            ? stats.highestWinrateRunes?.value
+            : stats.mostPopularRunes?.value
         }
       />
-      <SkillsPanel stats={stats} type={type} champName={champName} />
-      <BuildPanel stats={stats.buildStats} type={type} />
-      <SummonerSpellsPanel type={type} stats={stats} />
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-evenly",
+          flexWrap: "wrap",
+          gap: 16,
+        }}
+      >
+        <SkillsPanel champ={champ} stats={stats} type={type} />
+        <div
+          style={{
+            display: "flex",
+            gap: 16,
+          }}
+        >
+          <BuildPanel stats={stats.buildStats} type={type} />
+          <SummonerSpellsPanel type={type} stats={stats} />
+        </div>
+        <TipsPanel champ={champ} />
+      </div>
     </TabPanelWrapper>
   );
 };
